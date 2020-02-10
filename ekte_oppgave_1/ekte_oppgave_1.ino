@@ -27,7 +27,7 @@ void myTimerEvent()
   Blynk.virtualWrite(V1, voltR2);
   Serial.print("pikk");
   Serial.println("kake");
-  Serial.println("no!");
+  Serial.println("yes");
 
 }
 
