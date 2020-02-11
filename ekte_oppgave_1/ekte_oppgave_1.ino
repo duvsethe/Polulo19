@@ -28,6 +28,7 @@ void myTimerEvent()
   Serial.print("pikk");
   Serial.println("kake");
   Serial.println("yes");
+  Serial.println("ok");
 
 }
 
