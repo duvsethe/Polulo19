@@ -29,6 +29,7 @@ void myTimerEvent()
   Serial.println("kake");
   Serial.println("yes");
   Serial.println("sug pikk");
+  Serial.println("heihei");
 
 }
 
