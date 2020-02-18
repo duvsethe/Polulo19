@@ -17,7 +17,7 @@ void setup() {
   delay(1000);
   //clearing the LCD
   lcd.clear();
-  Serial.println("hei");
+  Serial.println("hhtygrfei");
 }
 
 void loop() {
