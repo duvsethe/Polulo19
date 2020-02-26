@@ -11,6 +11,7 @@ Zumo32U4Buzzer buzzer;
 unsigned int linesensorValues[5];
 
 void setup() {
+  //Buzzer sound for when upload is finished
   buzzer.play(">g32>>c32");
   linesensor.initFiveSensors();
   // writing to LCD
@@ -18,11 +19,11 @@ void setup() {
   lcd.print("Press A");
   lcd.gotoXY(0,1);
   lcd.print("to Calib");
-  //wait for the button nto be pressed
+  //wait for the button to be pressed
   buttonA.waitForButton();
   //waiting for the user to get away
   delay(1000);
-  //clearing the LCD
+  //clearing the LCD and telling the user that the cars is calibrating
   lcd.clear();
   lcd.gotoXY(0,0);
   lcd.print("Cali -");
@@ -50,7 +51,7 @@ void setup() {
 void loop() {
   //Reads linesensor value
    int position = linesensor.readLine(linesensorValues);
-   //Prints linesensors on lcd
+   //Prints linesensors value on lcd
    lcd.print(position);
    lcd.gotoXY(0,0);
    //Using function to choose motorpower
