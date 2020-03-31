@@ -36,27 +36,27 @@ void updateMenu() {
       break;
     case 1:
       lcd.clear();
-      lcd.print(">MenuItem1");
+      lcd.print(">Menu1");
       lcd.gotoXY(0, 1);
-      lcd.print(" MenuItem2");
+      lcd.print(" Menu2");
       break;
     case 2:
       lcd.clear();
-      lcd.print(" MenuItem1");
+      lcd.print(" Menu2");
       lcd.gotoXY(0, 1);
-      lcd.print(">MenuItem2");
+      lcd.print(">Menu3");
       break;
     case 3:
       lcd.clear();
-      lcd.print(">MenuItem3");
+      lcd.print(">Menu3");
       lcd.gotoXY(0, 1);
-      lcd.print(" MenuItem4");
+      lcd.print(" Menu4");
       break;
     case 4:
       lcd.clear();
-      lcd.print(" MenuItem3");
+      lcd.print(" Menu4");
       lcd.gotoXY(0, 1);
-      lcd.print(">MenuItem4");
+      lcd.print(">Menu4");
       break;
     case 5:
       menu = 4;
@@ -83,21 +83,21 @@ void executeAction() {
 
 void action1() {
   lcd.clear();
-  lcd.print(">Executing #1");
+  lcd.print(">Exec 1");
   delay(1500);
 }
 void action2() {
   lcd.clear();
-  lcd.print(">Executing #2");
+  lcd.print(">Exec 2");
   delay(1500);
 }
 void action3() {
   lcd.clear();
-  lcd.print(">Executing #3");
+  lcd.print(">Exec 3");
   delay(1500);
 }
 void action4() {
   lcd.clear();
-  lcd.print(">Executing #4");
+  lcd.print(">Exec 4");
   delay(1500);
 }
