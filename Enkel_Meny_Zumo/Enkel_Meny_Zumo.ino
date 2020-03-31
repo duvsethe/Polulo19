@@ -1,7 +1,7 @@
 #include <Zumo32U4.h>
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
-Zumo32U4ButtonB buttonC;
+Zumo32U4ButtonC buttonC;
 Zumo32U4LCD lcd;
 
 int menu = 1;
