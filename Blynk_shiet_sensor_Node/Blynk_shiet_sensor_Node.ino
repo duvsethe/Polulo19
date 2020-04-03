@@ -1,4 +1,5 @@
 
+
 /*
  * 31.03.20 - Fått til avlesning for max og min verdi hvert 30 sek 
  * for temp og photores
@@ -24,6 +25,7 @@ BlynkTimer timer;
 WidgetLED led1 (V0);
 WidgetLED led2 (V1);
 WidgetTerminal terminal(V9);
+Servo myservo;
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
@@ -75,6 +77,8 @@ int tempAlarm_Limit = 30;
 int photoAlarm_Limit = 100;
 int tiltAlarm_Limit = 1;
 int distanceAlarm_Limit = 200;
+int servoAlarmVal = 180;
+int servoResetVal = 0;
 
   
 
@@ -240,8 +244,10 @@ void myTimerEvent6(){
 
 
 BLYNK_WRITE(V7) {
+  //Resetting buzzer and LED alarms
   if( param.asInt()){
-    analogWrite(buzzer, 0);
+    servoReset();
+    Serial.println("Alarm reset");
   }
   
 }
@@ -255,6 +261,13 @@ BLYNK_WRITE(V8) {
   terminal.flush();
 }
 
+BLYNK_WRITE(V99){
+  int val = param.asInt();
+  val = map(val, 0, 1023, 0, 180);
+  myservo.write(val);
+}
+
+
 
 void setup()
 {
@@ -266,6 +279,21 @@ void setup()
   pinMode(pinTrig, OUTPUT);
   pinMode(pinEcho, INPUT);
   pinMode(buzzer, OUTPUT);
+  
+  //Blynk.begin(auth, ssid, pass);
+  // You can also specify server:
+  //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
+  Blynk.begin(auth, ssid, pass, IPAddress(91, 192, 221, 40), 8080);
+
+  myservo.attach(12);
+  for ( int i = 0; i <=180; i++){
+    myservo.write(i);
+    delay(10);
+  }
+  for ( int i = 180; i >=0; i--){
+    myservo.write(i);
+    delay(10);
+  }
 
   //Resetting the arrays for temp and photo
   for (int thisReading = 0; thisReading <= 50; thisReading++) {
@@ -274,11 +302,6 @@ void setup()
     readingsTilt[thisReading] = 0;
     readingsDistance[thisReading] = 0;
   }
-
-  //Blynk.begin(auth, ssid, pass);
-  // You can also specify server:
-  //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
-  Blynk.begin(auth, ssid, pass, IPAddress(91, 192, 221, 40), 8080);
 
   //Turning on led signalising calibration
   led1.on();
@@ -289,7 +312,8 @@ void setup()
   terminal.clear();
 
   //Calibrate for 5 secs
-  while (millis() < calTime) {
+  unsigned long timeNow = millis();
+  while ((millis()-timeNow) < calTime) {
     valPhoto = analogRead(pinPhoto);
     if (valPhoto < minPhoto) minPhoto = valPhoto;//Record the maximum sensor value
     if (valPhoto > maxPhoto) maxPhoto = valPhoto; //Record the minimum sensor value
@@ -318,12 +342,6 @@ void setup()
   startTime = millis();
 }
 
-void loop()
-{
-  Blynk.run();
-  timer.run(); // Initiates BlynkTimer
-
-}
 
 float ultraSonic(){
   
@@ -372,24 +390,42 @@ void alarmFunction(int temp, int photo, int tilt, int distance){
       break;
     case 1:
       Serial.println("ALARM! To high Temp and to low Photo");
-      analogWrite(buzzer, 1000);
+      servoAlarm();
       break;
     case 2:
       Serial.println("ALARM! To high Temp and to big Distance");
-      analogWrite(buzzer, 1000);
+      servoAlarm();
       break;
     case 3:
       Serial.println("ALARM! To high Distance and to low Photo");
-      analogWrite(buzzer, 1000);
+      servoAlarm();
       break;
     case 4:
       Serial.println("ALARM! Door is open!");
-      analogWrite(buzzer, 1000);
+      servoAlarm();
       break;
   }
+}
 
+
+void servoAlarm(){
+  Serial.print("kake");
+  myservo.write(servoAlarmVal);
+  delay(20);
   
-
-
   
+}
+
+void servoReset(){
+  myservo.write(servoResetVal);
+  delay(20);
+}
+
+
+
+void loop()
+{
+  Blynk.run();
+  timer.run(); // Initiates BlynkTimer
+
 }
