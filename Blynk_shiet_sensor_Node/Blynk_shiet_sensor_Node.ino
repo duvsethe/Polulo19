@@ -42,7 +42,7 @@ const int pinPhoto = 33;
 const int pinTilt = 14;
 const int pinTrig = 0;
 const int pinEcho = 4;
-const int buzzer = 2;
+const int buzzer = 27;
 
 
 bool valTilt;
@@ -71,6 +71,10 @@ int highTemp = -50;
 int lowPhoto = 255;
 int highPhoto = 0;
 int boolTilt = false;
+int testButton = 0;
+int servoEndPos = 0;
+int servoPos = 0;
+int alarmNumb = 0;
 
 //Alarm limits
 int tempAlarm_Limit = 30;
@@ -86,6 +90,7 @@ int servoResetVal = 0;
 void myTimerEvent1()
 {
   //Reading temp value and writing to Blynk
+  if( !testButton){
   valTemp = analogRead(pinTemp);
   float volt = (valTemp / 1023.0);
   float tempC = (volt - 0.5) * 100; // converting into Celsius
@@ -95,10 +100,11 @@ void myTimerEvent1()
   Blynk.virtualWrite(V12, tempC); //Chart value Temp
   readIndexTemp += 1;
   if (readIndexTemp > 50) readIndexTemp = 0; // Resetting readIndexTemp
-
+  }
 }
 
 void myTimerEvent2() {
+  if( !testButton){
   //Reads, maps and constrains Fhotoresistor value
   valPhoto = analogRead(pinPhoto);
   valPhoto = map(valPhoto, minPhoto, maxPhoto, 0, 255);
@@ -109,10 +115,11 @@ void myTimerEvent2() {
   Blynk.virtualWrite(V22, valPhoto); //Chart value Photoresistor
   readIndexPhoto +=1;
   if(readIndexPhoto > 50) readIndexPhoto = 0; //Resetting readIndexPhto
-
+  }
 }
 
 void myTimerEvent3() {
+  if( !testButton){
   //Reading value of tiltsensor
   valTilt = digitalRead(pinTilt);
   if (valTilt == true) {
@@ -129,10 +136,12 @@ void myTimerEvent3() {
   }
   readIndexTilt +=1;
   if(readIndexTilt >50) readIndexTilt = 0; //Resetting readIndexTilt
+  }
 }
 
 void myTimerEvent4(){
   //Calculate the distace
+  if( !testButton){
   valDistance = ultraSonic();
   valDistance = constrain(valDistance, 2, 400); //Constrain for min and max value
   readingsDistance[readIndexDistance] = valDistance; //Saving the Distance into an array
@@ -141,14 +150,13 @@ void myTimerEvent4(){
   Blynk.virtualWrite(V42, valDistance); //Chart value Distance
   readIndexDistance += 1;
   if (readIndexDistance > 50) readIndexDistance = 0; // Resetting readIndexDistance
-
-
-  
+  }
 }
 
 void myTimerEvent5() {
   //Function for calculating average temp and photoRes
   //The system has to run for an amount of time before this function to run
+  if( !testButton){
   if ((millis() - startTime) >= averageTime) {
     //Creating variables internally
     float totalTemp = 0;
@@ -197,12 +205,13 @@ void myTimerEvent5() {
     Blynk.virtualWrite(V13, averageTemp); //Chart average value Temp
     Blynk.virtualWrite(V23, averagePhoto); //Chart average value Photo  
     Blynk.virtualWrite(V43, averageDistance); //Chart average value Distance
-    
+  }
   }
 }
 
 void myTimerEvent6(){
   if ((millis() - startTime) >= averageTime) {
+    if( !testButton){
       
     int lowTemp = 125;
     int highTemp = -50;
@@ -236,10 +245,28 @@ void myTimerEvent6(){
     Blynk.virtualWrite(V45, lowDistance);  
 
     alarmFunction(highTemp, lowPhoto, boolTilt, highDistance);
-
     }
+  }
 }
 
+void myTimerEvent7(){
+  if ( alarmNumb == 0){
+    if ( testButton == 1){
+      if( servoEndPos == 0){
+        Serial.println("test");
+        myservo.write(servoPos);
+        servoPos += 1;
+        if ( servoPos == 180) servoEndPos = 1;
+       }
+      else if (servoEndPos == 1){
+        Serial.println("test2");
+        myservo.write(servoPos);
+        servoPos -= 1;
+        if (servoPos == 0) servoEndPos = 0;
+      }
+    }
+  }
+}
 
 
 
@@ -262,9 +289,8 @@ BLYNK_WRITE(V8) {
 }
 
 BLYNK_WRITE(V99){
-  int val = param.asInt();
-  val = map(val, 0, 1023, 0, 180);
-  myservo.write(val);
+  testButton  = param.asInt();
+ 
 }
 
 
@@ -288,10 +314,12 @@ void setup()
   myservo.attach(12);
   for ( int i = 0; i <=180; i++){
     myservo.write(i);
+    servoPos = i;
     delay(10);
   }
   for ( int i = 180; i >=0; i--){
     myservo.write(i);
+    servoPos = i;
     delay(10);
   }
 
@@ -332,12 +360,13 @@ void setup()
   terminal.flush();
 
   //Setting the interval for the timers
-  timer.setInterval(4000L, myTimerEvent1);//Temp sensor every 5 sec
-  timer.setInterval(3000L, myTimerEvent2);//Photo resistor every 2 sec
-  timer.setInterval(2000L, myTimerEvent3);//Tilt sensor every sec
-  timer.setInterval(1000L, myTimerEvent4);//HC-SR04 sensor every sec
+  timer.setInterval(500L, myTimerEvent1);//Temp sensor every 5 sec
+  timer.setInterval(550L, myTimerEvent2);//Photo resistor every 2 sec
+  timer.setInterval(600L, myTimerEvent3);//Tilt sensor every sec
+  timer.setInterval(575L, myTimerEvent4);//HC-SR04 sensor every sec
   timer.setInterval(10000L, myTimerEvent5);//Calculating average every 10sec
   timer.setInterval(30000L, myTimerEvent6);//Max & Min calue every 30 sec
+  timer.setInterval(20L, myTimerEvent7); 
 
   startTime = millis();
 }
@@ -370,7 +399,6 @@ void alarmFunction(int temp, int photo, int tilt, int distance){
   bool alarmPhoto = false;
   bool alarmTilt = false;
   bool alarmDistance = false;
-  int alarmNumb = 0;
   
   if ( temp > tempAlarm_Limit) alarmTemp = true;
   if ( photo < photoAlarm_Limit) alarmPhoto = true;
@@ -411,14 +439,20 @@ void alarmFunction(int temp, int photo, int tilt, int distance){
 void servoAlarm(){
   Serial.print("kake");
   myservo.write(servoAlarmVal);
-  delay(20);
+  servoEndPos = 1;
+  servoPos = servoAlarmVal;
+
+
   
   
 }
 
 void servoReset(){
   myservo.write(servoResetVal);
-  delay(20);
+  servoEndPos = 0;
+  servoPos = servoResetVal;
+
+
 }
 
 
