@@ -37,6 +37,8 @@ char ssid[] = "Khuongs10";
 char pass[] = "Kake1234";
 
 //Defining pinnumber and global variables
+
+//Pins
 const int pinTemp = 32;
 const int pinPhoto = 33;
 const int pinTilt = 14;
@@ -44,20 +46,23 @@ const int pinTrig = 0;
 const int pinEcho = 4;
 const int buzzer = 27;
 
-
+//Raw values from sensors
 bool valTilt;
 float valTemp;
 int valPhoto;
 float valDistance;
 int numReadings = 10;
 
+//Values for calibrating Photoresistor
 int minPhoto = 1023;
 int maxPhoto = 0;
 
+//Time variables
 unsigned long calTime = 5000;
 unsigned long averageTime = 30000;
 unsigned long startTime;
 
+//Array values
 float readingsTemp[50];
 int readingsPhoto[50];
 int readingsTilt[50];
@@ -66,11 +71,6 @@ int readIndexTemp = 0;
 int readIndexPhoto = 0;
 int readIndexTilt = 0;
 int readIndexDistance = 0;
-int lowTemp = 125;
-int highTemp = -50;
-int lowPhoto = 255;
-int highPhoto = 0;
-int boolTilt = false;
 int testButton = 0;
 int servoEndPos = 0;
 int servoPos = 0;
@@ -123,14 +123,14 @@ void myTimerEvent3() {
   //Reading value of tiltsensor
   valTilt = digitalRead(pinTilt);
   if (valTilt == true) {
-    led1.on();
-    led2.off();
+    led1.on();// Green led on
+    led2.off();// Red led off
     Blynk.virtualWrite(V32, 0); //Chart tiltsensor "off"
     readingsTilt[readIndexTilt] = 0; //Tiltsensor has tilted, an "true" value been added
   }
   else {
-    led1.off();
-    led2.on();
+    led1.off();//Green led off
+    led2.on();//Red led on
     Blynk.virtualWrite(V32, 1); //Chart tiltsensor "on"
     readingsTilt[readIndexTilt] = 1;//Tilt sensor not tilted, an false value been added
   }
@@ -212,59 +212,61 @@ void myTimerEvent5() {
 void myTimerEvent6(){
   if ((millis() - startTime) >= averageTime) {
     if( !testButton){
-      
-    int lowTemp = 125;
-    int highTemp = -50;
-    int lowPhoto = 255;
-    int highPhoto = 0;
-    int highDistance = 2;
-    int lowDistance = 400;
-    int boolTilt = 0;
+      //Creating variables to find MIN and MAX values
+      int lowTemp = 125;
+      int highTemp = -50;
+      int lowPhoto = 255;
+      int highPhoto = 0;
+      int highDistance = 2;
+      int lowDistance = 400;
+      int boolTilt = 0;
 
-    for(int i=0; i <= 49; i++){
-      int arrayTemp = readingsTemp[i];
-      int arrayPhoto = readingsPhoto[i];
-      int arrayDistance = readingsDistance[i];
-      int arrayTilt = readingsTilt[i];
-
-      if( arrayTemp > highTemp) highTemp = arrayTemp;
-      if( arrayTemp < lowTemp) lowTemp = arrayTemp;
-      if( arrayPhoto > highPhoto) highPhoto = arrayPhoto;
-      if( arrayPhoto < lowPhoto) lowPhoto = arrayPhoto;
-      if( arrayTilt == 1) boolTilt = 1;
-      if( arrayDistance < lowDistance) lowDistance = arrayDistance;
-      if( arrayDistance > highDistance) highDistance = arrayDistance;
-  }
-
-    Blynk.virtualWrite(V14, highTemp);
-    Blynk.virtualWrite(V15, lowTemp);
-    Blynk.virtualWrite(V24, highPhoto);
-    Blynk.virtualWrite(V25, lowPhoto);
-    Blynk.virtualWrite(V34, boolTilt);
-    Blynk.virtualWrite(V44, highDistance);
-    Blynk.virtualWrite(V45, lowDistance);  
-
-    alarmFunction(highTemp, lowPhoto, boolTilt, highDistance);
+      for(int i=0; i <= 49; i++){
+        //Reading the values from arrays
+        int arrayTemp = readingsTemp[i];
+        int arrayPhoto = readingsPhoto[i];
+        int arrayDistance = readingsDistance[i];
+        int arrayTilt = readingsTilt[i];
+        //Replace the MIN and MAX values
+        if( arrayTemp > highTemp) highTemp = arrayTemp;
+        if( arrayTemp < lowTemp) lowTemp = arrayTemp;
+        if( arrayPhoto > highPhoto) highPhoto = arrayPhoto;
+        if( arrayPhoto < lowPhoto) lowPhoto = arrayPhoto;
+        if( arrayTilt == 1) boolTilt = 1;
+        if( arrayDistance < lowDistance) lowDistance = arrayDistance;
+        if( arrayDistance > highDistance) highDistance = arrayDistance;
+      }
+      //Charting the MIN and MAX values
+      Blynk.virtualWrite(V14, highTemp);
+      Blynk.virtualWrite(V15, lowTemp);
+      Blynk.virtualWrite(V24, highPhoto);
+      Blynk.virtualWrite(V25, lowPhoto);
+      Blynk.virtualWrite(V34, boolTilt);
+      Blynk.virtualWrite(V44, highDistance);
+      Blynk.virtualWrite(V45, lowDistance);  
+      //Sends values to alarmfunction
+      alarmFunction(highTemp, lowPhoto, boolTilt, highDistance);
     }
   }
 }
 
 void myTimerEvent7(){
-  if ( alarmNumb == 0){
-    if ( testButton == 1){
-      if( servoEndPos == 0){
-        Serial.println("test");
-        myservo.write(servoPos);
-        servoPos += 1;
-        if ( servoPos == 180) servoEndPos = 1;
-       }
-      else if (servoEndPos == 1){
-        Serial.println("test2");
-        myservo.write(servoPos);
-        servoPos -= 1;
-        if (servoPos == 0) servoEndPos = 0;
-      }
+  //Testing servomotor
+  //When testing the servo, sensors do not read values
+  //Testing does not work if theres an alarm active
+  if ( alarmNumb == 0 && testButton == 1){
+    if( servoEndPos == 0){
+      Serial.println("test");
+      myservo.write(servoPos);
+      servoPos += 1;
+      if ( servoPos == 180) servoEndPos = 1;
     }
+     else if (servoEndPos == 1){
+      Serial.println("test2");
+      myservo.write(servoPos);
+      servoPos -= 1;
+      if (servoPos == 0) servoEndPos = 0;
+     }
   }
 }
 
@@ -289,6 +291,7 @@ BLYNK_WRITE(V8) {
 }
 
 BLYNK_WRITE(V99){
+  //Test button for servomotr
   testButton  = param.asInt();
  
 }
@@ -311,6 +314,7 @@ void setup()
   //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
   Blynk.begin(auth, ssid, pass, IPAddress(91, 192, 221, 40), 8080);
 
+  //Attach pin to servomotor, and test the motor
   myservo.attach(12);
   for ( int i = 0; i <=180; i++){
     myservo.write(i);
@@ -331,7 +335,7 @@ void setup()
     readingsDistance[thisReading] = 0;
   }
 
-  //Turning on led signalising calibration
+  //Turning on led signalising calibration an sets numReading to 10
   led1.on();
   led2.on();
   Blynk.virtualWrite(V8, 10);
@@ -360,20 +364,20 @@ void setup()
   terminal.flush();
 
   //Setting the interval for the timers
-  timer.setInterval(500L, myTimerEvent1);//Temp sensor every 5 sec
-  timer.setInterval(550L, myTimerEvent2);//Photo resistor every 2 sec
-  timer.setInterval(600L, myTimerEvent3);//Tilt sensor every sec
-  timer.setInterval(575L, myTimerEvent4);//HC-SR04 sensor every sec
+  timer.setInterval(2000L, myTimerEvent1);//Temp sensor every 5 sec
+  timer.setInterval(1000L, myTimerEvent2);//Photo resistor every 2 sec
+  timer.setInterval(500L, myTimerEvent3);//Tilt sensor every sec
+  timer.setInterval(750L, myTimerEvent4);//HC-SR04 sensor every sec
   timer.setInterval(10000L, myTimerEvent5);//Calculating average every 10sec
   timer.setInterval(30000L, myTimerEvent6);//Max & Min calue every 30 sec
   timer.setInterval(20L, myTimerEvent7); 
-
+  //Start time set
   startTime = millis();
 }
 
 
 float ultraSonic(){
-  
+  //Function for the SR-HC04 sensor
   float duration = 0;
   float distance = 0;
   
@@ -393,66 +397,79 @@ float ultraSonic(){
   return distance;
 }
 
+//Function for alarms
 void alarmFunction(int temp, int photo, int tilt, int distance){
-
+  //Creating variables used in the function
   bool alarmTemp = false;
   bool alarmPhoto = false;
   bool alarmTilt = false;
   bool alarmDistance = false;
-  
+  //Checks if values are over/under limit values
   if ( temp > tempAlarm_Limit) alarmTemp = true;
   if ( photo < photoAlarm_Limit) alarmPhoto = true;
   if ( tilt == tiltAlarm_Limit) alarmTilt = true;
   if ( distance > distanceAlarm_Limit) alarmDistance = true;
-
-  if ( alarmTemp == true && alarmPhoto == true) alarmNumb = 1;
+  //Sets the alarmcodes
+  if ( alarmTemp == true && alarmPhoto == true) alarmNumb = 1; 
   else if ( alarmTemp == true && alarmDistance == true) alarmNumb = 2;
   else if ( alarmDistance == true && alarmPhoto == true) alarmNumb = 3;
   else if ( alarmTilt == true) alarmNumb = 4;
   else { alarmNumb = 0;}
   
 
+  alarmSwitch(alarmNumb);
+  
+}
+
+void alarmSwitch(int alarmNumb){
+  
   switch( alarmNumb ){
     case 0:
 
       break;
+      //Temp and Photo alarm
     case 1:
       Serial.println("ALARM! To high Temp and to low Photo");
+      terminal.println("ALARM! To high Temp and to low Photo");
+      terminal.flush();
       servoAlarm();
       break;
+      //Temp and Distance alarm
     case 2:
       Serial.println("ALARM! To high Temp and to big Distance");
+      terminal.println("ALARM! To high Temp and to big Distance");
       servoAlarm();
+      terminal.flush();
       break;
+      //Distance and Photo alarm
     case 3:
       Serial.println("ALARM! To high Distance and to low Photo");
+      terminal.println("ALARM! To high Distance and to low Photo");
       servoAlarm();
+      terminal.flush();
       break;
+      //Tilt alarm
     case 4:
       Serial.println("ALARM! Door is open!");
+      terminal.println("ALARM! Door is open!");
       servoAlarm();
+      terminal.flush();
       break;
   }
 }
 
 
 void servoAlarm(){
-  Serial.print("kake");
+  //Sets servo in alarm modus
   myservo.write(servoAlarmVal);
-  servoEndPos = 1;
-  servoPos = servoAlarmVal;
-
-
-  
-  
+  servoEndPos = 1; //Signalising what end position servo is in
+  servoPos = servoAlarmVal;  
 }
 
 void servoReset(){
   myservo.write(servoResetVal);
-  servoEndPos = 0;
+  servoEndPos = 0; //Signalising what end position servo is in
   servoPos = servoResetVal;
-
-
 }
 
 
