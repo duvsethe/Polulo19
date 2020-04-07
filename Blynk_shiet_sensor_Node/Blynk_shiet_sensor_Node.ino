@@ -14,6 +14,7 @@
  */
 #define BLYNK_PRINT Serial
 #include <WiFi.h>
+#include <WebServer.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 #include <ESP32_Servo.h>
@@ -26,6 +27,7 @@ WidgetLED led1 (V0);
 WidgetLED led2 (V1);
 WidgetTerminal terminal(V9);
 Servo myservo;
+WebServer server(80);
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
@@ -49,9 +51,10 @@ const int buzzer = 27;
 //Raw values from sensors
 bool valTilt;
 float valTemp;
+int numReadings = 10;
+float tempC;
 int valPhoto;
 float valDistance;
-int numReadings = 10;
 
 //Values for calibrating Photoresistor
 int minPhoto = 1023;
@@ -61,6 +64,12 @@ int maxPhoto = 0;
 unsigned long calTime = 5000;
 unsigned long averageTime = 30000;
 unsigned long startTime;
+
+//Values for WebServer and arrays
+int averagePhoto;
+float averageTemp;
+float averageDistance;
+
 
 //Array values
 float readingsTemp[50];
@@ -93,7 +102,7 @@ void myTimerEvent1()
   if( !testButton){
   valTemp = analogRead(pinTemp);
   float volt = (valTemp / 1023.0);
-  float tempC = (volt - 0.5) * 100; // converting into Celsius
+  tempC = (volt - 0.5) * 100; // converting into Celsius
   readingsTemp[readIndexTemp] = tempC; //Saving the temp into an array
   Blynk.virtualWrite(V10, tempC); //Labeled value Temp
   Blynk.virtualWrite(V11, tempC); // Gauge value Temp
@@ -191,9 +200,9 @@ void myTimerEvent5() {
 
     }
             
-    int averagePhoto = (totalPhoto / numReadings); //Calculating average Photo
-    float averageTemp = (totalTemp / numReadings); //Calculating average Temp
-    float averageDistance = (totalDistance /numReadings); //Calculating average Distance
+    averagePhoto = (totalPhoto / numReadings); //Calculating average Photo
+    averageTemp = (totalTemp / numReadings); //Calculating average Temp
+    averageDistance = (totalDistance /numReadings); //Calculating average Distance
     //Printing to terminal    
     terminal.print("The average temp is: ");
     terminal.println(averageTemp);
@@ -270,6 +279,10 @@ void myTimerEvent7(){
   }
 }
 
+void myTimerEvent8(){
+
+}
+
 
 
 BLYNK_WRITE(V7) {
@@ -300,8 +313,28 @@ BLYNK_WRITE(V99){
 
 void setup()
 {
-  // Debug console & setting pinMode
+  // Debug console & connecting to wifi
   Serial.begin(115200);
+  delay(100);
+  Serial.println("Connecting to ");
+  Serial.println(ssid);
+  //Connecting to the local wi-fi
+  WiFi.begin(ssid, pass);
+
+  //Controls if connectiong is made and prints the IP adress
+  while (WiFi.status() != WL_CONNECTED) {
+  delay(1000);
+  Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected..!");
+  Serial.print("Got IP: ");  Serial.println(WiFi.localIP());
+  server.on("/", handle_OnConnect);
+  server.onNotFound(handle_NotFound);
+  server.begin();
+  Serial.println("HTTP server started");
+  
+  //Setting pinMode
   pinMode(pinTemp, INPUT);
   pinMode(pinPhoto, INPUT);
   pinMode(pinTilt, INPUT);
@@ -371,6 +404,7 @@ void setup()
   timer.setInterval(10000L, myTimerEvent5);//Calculating average every 10sec
   timer.setInterval(30000L, myTimerEvent6);//Max & Min calue every 30 sec
   timer.setInterval(20L, myTimerEvent7); 
+  timer.setInterval(60000L, myTimerEvent8);
   //Start time set
   startTime = millis();
 }
@@ -467,16 +501,76 @@ void servoAlarm(){
 }
 
 void servoReset(){
+  //Sets servo back in "normal" condition
   myservo.write(servoResetVal);
   servoEndPos = 0; //Signalising what end position servo is in
   servoPos = servoResetVal;
 }
 
+void handle_OnConnect() {
+  //If connection is made, sends values to create HTML webserver
+  float Temperature = averageTemp; // Gets the values of the temperature
+  int PhotoRes = averagePhoto; // Gets the values of the humidity 
+  float Distance = averageDistance; //Gets the value of SR-HC04
+  String alarmText;
+  if ( alarmNumb == 0) alarmText = "Normal";
+  else{ alarmText = "Alarm";}
+  server.send(200, "text/html", SendHTML(Temperature,PhotoRes, Distance, alarmText)); 
+}
+
+void handle_NotFound(){
+  //If no connection you get an error page
+  server.send(404, "text/plain", "Not found");
+}
+
+String SendHTML(float Temperature,float PhotoRes, float Distance, String Text){
+  String ptr = "<!DOCTYPE html> <html>\n";
+  ptr +="<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
+  ptr +="<title>ESP32 Sensors Readings</title>\n";
+  ptr +="<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}\n";
+  ptr +="body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;}\n";
+  ptr +="p {font-size: 24px;color: #444444;margin-bottom: 10px;}\n";
+  ptr +="</style>\n";
+  ptr +="</head>\n";
+  ptr +="<body>\n";
+  ptr +="<div id=\"webpage\">\n";
+  ptr +="<h1>ESP32 Sensors Readings</h1>\n";
+    
+  ptr +="<p>Temperature: ";
+  ptr +=(int)Temperature;
+  ptr +="C";
+  ptr +="<p>PhotoResistor: ";
+  ptr +=(int)PhotoRes;
+  ptr +="<p>Distance: ";
+  ptr +=(float)Distance;
+  ptr +=" meters";
+  ptr +="<p>Status: ";
+  ptr +=(String)Text;
+  ptr +="<p>Mokka suger pikk";
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="<img src=http://www.agdervent.no/images/logo/bil-agderventilasjon-72dpi-farge.jpg>";//Image
+  ptr +="<br> ";
+  ptr +="<br> ";
+  ptr +="Made by Khuong Huynh";
+  ptr +="</p>";
+  ptr +="<meta http-equiv=refresh content=10>";//Refreshes every 10 sec automatically
+  
+  ptr +="</div>\n";
+  ptr +="</body>\n";
+  ptr +="</html>\n";
+  return ptr;
+}
 
 
 void loop()
 {
   Blynk.run();
   timer.run(); // Initiates BlynkTimer
+  server.handleClient();
 
 }
