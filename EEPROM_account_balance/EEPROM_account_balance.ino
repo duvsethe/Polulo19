@@ -27,7 +27,7 @@ void loop() {
   
       //evt. putte inn kode som viser oppdatert saldo på zumoskjermen, EEPROM.read(0)
   if ( buttonA.getSingleDebouncedPress()){
-  EEPROM.write(0, (account_balance + money_deposit)); 
+  account_balance += money_deposit;
   }
   EEPROM.write(0,account_balance); // Write account balance to EEPROM
   lcd.print(EEPROM.read(0));
