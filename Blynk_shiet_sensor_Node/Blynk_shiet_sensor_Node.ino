@@ -546,7 +546,7 @@ String SendHTML(float Temperature,float PhotoRes, float Distance, String Text){
   ptr +=" meters";
   ptr +="<p>Status: ";
   ptr +=(String)Text;
-  ptr +="<p>Mokka suger pikk";
+  ptr +="<br> ";
   ptr +="<br> ";
   ptr +="<br> ";
   ptr +="<br> ";
