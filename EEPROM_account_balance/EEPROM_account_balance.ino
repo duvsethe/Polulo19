@@ -3,10 +3,11 @@
 
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
+Zumo32U4ButtonB buttonB;
 Zumo32U4LCD lcd;
 Zumo32U4LineSensors linesensor;
 
-  int account_balance = EEPROM.read(0);
+int account_balance = EEPROM.read(0);
 //Making account balance variable
 
 
@@ -28,6 +29,10 @@ void loop() {
   if ( buttonA.getSingleDebouncedPress()){
   account_balance += money_deposit;
   }
+  if ( buttonB.getSingleDebouncedPress()){
+  account_balance -= money_deposit;
+  }
+  
   EEPROM.write(0,account_balance); // Write account balance to EEPROM
   lcd.print(EEPROM.read(0));
   delay(20);
