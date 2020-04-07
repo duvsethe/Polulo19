@@ -6,7 +6,8 @@ Zumo32U4ButtonA buttonA;
 Zumo32U4LCD lcd;
 Zumo32U4LineSensors linesensor;
 
-
+  float f = 0.00f;
+  int account_balance = EEPROM.get(0, f);
 //Making account balance variable
 
 
@@ -19,12 +20,12 @@ void setup() {
   lcd.clear();
   lcd.gotoXY(0,0);
   
+  
 
 }
 
 void loop() {
-  float f = 0.00f;
-  int account_balance = EEPROM.get(0, f);
+
   if ( buttonA.getSingleDebouncedPress()){
   account_balance += money_deposit;
   }
