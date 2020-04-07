@@ -11,11 +11,12 @@ Zumo32U4LineSensors linesensor;
 int account_balance = 0; 
 int buttonPin = 2; 
 
-const int money_deposit = 500; // Fixed amount of money to deposit (when e.g pushing button)
+const int money_deposit = 10; // Fixed amount of money to deposit (when e.g pushing button)
 
 
 
 void setup() {
+  EEPROM.write(0, account_balance);
   lcd.init();
   lcd.clear();
   lcd.gotoXY(0,0);
@@ -25,7 +26,6 @@ void setup() {
 
 void loop() {
   
-      //evt. putte inn kode som viser oppdatert saldo på zumoskjermen, EEPROM.read(0)
   if ( buttonA.getSingleDebouncedPress()){
   account_balance += money_deposit;
   }
