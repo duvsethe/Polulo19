@@ -11,7 +11,7 @@ int account_balance = EEPROM.read(0);
 //Making account balance variable
 
 
-const int money_deposit = 10; // Fixed amount of money to deposit (when e.g pushing button)
+const int money_deposit = 5; // Fixed amount of money to deposit (when e.g pushing button)
 
 
 
@@ -34,7 +34,7 @@ void loop() {
   }
   
   EEPROM.write(0,account_balance); // Write account balance to EEPROM
-  lcd.print(EEPROM.read(0));
+  lcd.print(EEPROM.read(0)*100);
   delay(20);
   lcd.clear();
   lcd.gotoXY(0,0);
