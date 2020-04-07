@@ -8,15 +8,13 @@ Zumo32U4LineSensors linesensor;
 
 
 //Making account balance variable
-int account_balance = 0; 
-int buttonPin = 2; 
+
 
 const int money_deposit = 10; // Fixed amount of money to deposit (when e.g pushing button)
 
 
 
 void setup() {
-  EEPROM.write(0, account_balance);
   lcd.init();
   lcd.clear();
   lcd.gotoXY(0,0);
@@ -25,7 +23,8 @@ void setup() {
 }
 
 void loop() {
-  
+  float f = 0.00f;
+  int account_balance = EEPROM.get(0, f);
   if ( buttonA.getSingleDebouncedPress()){
   account_balance += money_deposit;
   }
