@@ -88,7 +88,7 @@ float batteryCharge(){
 
 float speedoMeter(){
 
-  float deltaBatt = (lastBattery - batteryLife)*(-1);
+  float deltaBatt = (lastBattery - batteryLife);
   lastBattery = batteryLife;
   lastTime = millis();
 
