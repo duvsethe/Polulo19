@@ -15,6 +15,11 @@ float meters = 0;
 float batteryLife = 52.0;
 bool forward = false;
 bool backward = false;
+float lastBattery = batteryLife;
+float mySpeed;
+
+unsigned long speedTime = 1000;
+unsigned long lastTime = millis();
 
 
 void setup() {
@@ -41,10 +46,16 @@ void loop() {
   meters += count;
   batteryDrain();
   batteryCharge();
-  dirDrive();
+  motors.setSpeeds(100,100);
+  if (  (millis()-lastTime) >= speedTime){
+    mySpeed = speedoMeter();
+    
+  }
   //Printing meters
   lcd.gotoXY(0,0);
-  lcd.print(batteryLife);
+  lcd.print(mySpeed);
+  lcd.gotoXY(0,1);
+  lcd.print("m/s");
   delay(10);
 
   }
@@ -75,30 +86,13 @@ float batteryCharge(){
 
 }
 
-void dirDrive(){
-    //Makes motor drive straight
-  if(batteryLife >= 51 && forward == false && backward == false){
-    motors.setSpeeds(100,100);
-    forward = true;
-    backward = false;
-  }
-  else if( batteryLife <= 50 && forward == true && backward == false){
-    motors.setSpeeds(0,0);
-    delay(20);
-    forward = false;
-    backward = false;
-  }
-  else if( batteryLife <= 50 && forward == false && backward == false){
-    motors.setSpeeds(-100,-100);
-    forward = false;
-    backward = true;
-    
-  }
-  else if ( batteryLife >= 53 && forward == false && backward == true){
-    motors.setSpeeds(0,0);
-    delay(20);   
-    forward = false;
-    backward = false;
-  }
+float speedoMeter(){
+
+  int deltaBatt = lastBattery - batteryLife;
+  lastBattery = deltaBatt;
+  lastTime = millis();
+
+
+  return deltaBatt;
   
 }
