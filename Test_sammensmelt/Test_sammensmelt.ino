@@ -55,9 +55,9 @@ void updateMenu() {
       break;
     case 4:
       lcd.clear();
-      lcd.print(" Menu4");
+      lcd.print("> Menu4");
       lcd.gotoXY(0, 1);
-      lcd.print(">Menu4");
+      lcd.print("Menu4");
       break;
     case 5:
       menu = 4;
