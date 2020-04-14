@@ -150,7 +150,7 @@ void myTimerEvent4(){
 }
 
 void myTimerEvent5() {
-  //Function for calculating average temp and photoRes
+  //Function for calculating average temp, distance and photoRes
   //The system has to run for an amount of time before this function to run
   if( !testButton){
   if ((millis() - startTime) >= averageTime) {
