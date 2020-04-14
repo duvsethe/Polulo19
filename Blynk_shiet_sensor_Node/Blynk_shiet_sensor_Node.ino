@@ -1,17 +1,4 @@
 
-
-/*
- * 31.03.20 - Fått til avlesning for max og min verdi hvert 30 sek 
- * for temp og photores
- * 
- *02.04.20 
- *- Fått til max og min verdi ultrasonic
- *- Fått til buzzer alarm
- *- Fått til reset av buzzer
- * 
- *NEXT
- *Få til blynk notify og servo motor
- */
 #define BLYNK_PRINT Serial
 #include <WiFi.h>
 #include <WebServer.h>
@@ -163,7 +150,7 @@ void myTimerEvent4(){
 }
 
 void myTimerEvent5() {
-  //Function for calculating average temp, distance and photoRes
+  //Function for calculating average temp and photoRes
   //The system has to run for an amount of time before this function to run
   if( !testButton){
   if ((millis() - startTime) >= averageTime) {
