@@ -45,11 +45,11 @@ void updateMenu() {
       lcd.clear();
       lcd.print(">Turn");
       lcd.gotoXY(0, 1);
-      lcd.print("Sircle");
+      lcd.print("Circle");
       break;
     case 3:
       lcd.clear();
-      lcd.print(">Sircle");
+      lcd.print(">Circle");
       lcd.gotoXY(0, 1);
       lcd.print(" Menu4");
       break;
