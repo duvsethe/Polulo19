@@ -17,13 +17,17 @@ bool forward = false;
 bool backward = false;
 float lastBattery = batteryLife;
 float mySpeed;
-
+float readingsSpeed[60];
+int readIndexSpeed = 0;
 unsigned long speedTime = 1000;
 unsigned long lastTime = millis();
 
 
 void setup() {
   //Buzzer sound for when upload is finished
+  for (int thisReading = 0; thisReading <=60; thisReading++){
+    readingsSpeed[thisReading] = 0;
+  }
   buzzer.play(">g32>>c32");
   // writing to LCD
   lcd.clear();
@@ -49,13 +53,17 @@ void loop() {
   motors.setSpeeds(100,100);
   if (  (millis()-lastTime) >= speedTime){
     mySpeed = speedoMeter();
-    
+    readingsSpeed[readIndexSpeed] = mySpeed;
+    readIndexSpeed += 1;
+    if (readIndexSpeed > 60) readIndexSpeed = 0;
   }
   //Printing meters
   lcd.gotoXY(0,0);
   lcd.print(mySpeed);
-  lcd.gotoXY(0,1);
   lcd.print("m/s");
+  lcd.gotoXY(0,1);
+  lcd.print(meters);
+  lcd.print("m");
   delay(10);
 
   }
