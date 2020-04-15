@@ -12,6 +12,7 @@
 BlynkTimer timer;
 WidgetLED led1 (V0);
 WidgetLED led2 (V1);
+WidgetLED led3 (V2);
 WidgetTerminal terminal(V9);
 Servo myservo;
 WebServer server(80);
@@ -267,7 +268,17 @@ void myTimerEvent7(){
 }
 
 void myTimerEvent8(){
-
+  if ( alarmNumb != 0){
+    if (led3.getValue()){
+      led3.off();
+    }
+    else{
+      led3.on();
+    }
+  }
+  else{
+    led3.off();
+  }
 }
 
 
@@ -391,7 +402,7 @@ void setup()
   timer.setInterval(10000L, myTimerEvent5);//Calculating average every 10sec
   timer.setInterval(30000L, myTimerEvent6);//Max & Min calue every 30 sec
   timer.setInterval(20L, myTimerEvent7); 
-  timer.setInterval(60000L, myTimerEvent8);
+  timer.setInterval(900L, myTimerEvent8);
   //Start time set
   startTime = millis();
 }
