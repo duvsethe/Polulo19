@@ -51,32 +51,42 @@ void setup() {
 void loop() {
   //Reads linesensor value
    int position = linesensor.readLine(linesensorValues);
+   bool deadEnd = false;
+   bool noTape = false;
    
 
    if ( linesensorValues[0] <= 10 && linesensorValues[1] <= 10 && linesensorValues[2] <= 10 && linesensorValues[3] <= 10 && linesensorValues[4] <= 10 ){
-    motors.setSpeeds(150,150);
+    noTape = true;
    }
    
    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
-    motors.setSpeeds(0,0);
-    delay(20);
-    motors.setSpeeds(100,-100);
-    delay(50);
-    motors.setSpeeds(0,0);
+    deadEnd = true;
    }
    
    //Prints linesensors value on lcd
    lcd.print(position);
    lcd.gotoXY(0,0);
    //Using function to choose motorpower
-   direct(position);
+   direct(position, noTape, deadEnd);
    delay(75);
    }
 
 //Function for choosing speed on motors
-void direct(int x){
+void direct(int x, bool dirTape, bool dirEnd ){
+
+  if ( dirTape ){
+    motors.setSpeeds(150,150);
+  }
+  else if ( dirEnd ){
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100, -100);
+    delay(50);
+    motors.setSpeeds(100,100);
+    delay(50);
+  }
   //Turning motor to the right
-  if( x < 1500){
+  else if( x < 1500){
     motors.setSpeeds(-50,175);
   }
   //Turning motor to the left
