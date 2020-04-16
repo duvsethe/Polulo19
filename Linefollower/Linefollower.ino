@@ -61,6 +61,8 @@ void loop() {
    
    //Prints linesensors value on lcd
    lcd.print(position);
+   lcd.gotoXY(0,1);
+   lcd.print(tapeNum);
    lcd.gotoXY(0,0);
    //Using function to choose motorpower
    direct(position, myTape, tapeNum);
