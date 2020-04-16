@@ -55,7 +55,7 @@ void loop() {
    bool noTape = false;
    
 
-   if ( linesensorValues[0] <= 10 && linesensorValues[1] <= 10 && linesensorValues[2] <= 10 && linesensorValues[3] <= 10 && linesensorValues[4] <= 10 ){
+   if ( linesensorValues[0] <= 2 && linesensorValues[1] <= 2 && linesensorValues[2] <= 2 && linesensorValues[3] <= 2 && linesensorValues[4] <= 2 ){
     noTape = true;
    }
    
@@ -68,7 +68,7 @@ void loop() {
    lcd.gotoXY(0,0);
    //Using function to choose motorpower
    direct(position, noTape, deadEnd);
-   delay(75);
+   delay(50);
    }
 
 //Function for choosing speed on motors
@@ -76,13 +76,13 @@ void direct(int x, bool dirTape, bool dirEnd ){
 
   if ( dirTape ){
     motors.setSpeeds(150,150);
-    delay(400);
+    delay(100);
   }
   else if ( dirEnd ){
     motors.setSpeeds(0,0);
     delay(200);
     motors.setSpeeds(100, -100);
-    delay(200);
+    delay(1800);
     motors.setSpeeds(100,100);
     delay(200);
   }
