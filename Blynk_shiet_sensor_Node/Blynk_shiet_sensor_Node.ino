@@ -1,13 +1,34 @@
-/*
+/* In this code the microcontroller is going to communicate with BLYNK via Wifi
+ * The microcontroller starts by connecting to the BLYNK server and the local internett.
+ * It then test the servomotor by going side to side and calibrate the photoresistor.
+ * This program uses timer intervals to call different functiong that reads the sensorvalues.
+ *  
+ * The microcontroller are saving the sensorvalues into arrays and visualising them in a SuperChart, Gauges, Labeled Displays and LED's
+ * in live time on the BLYNK app. The arrays can save 50 values, after that it starts replacing the older values. 
  * 
+ * After a set timer, the microcontroller are going to calculate the average value. There's a Slider in the BLYNK app that lets you
+ * choose how many of the last readings you want to use (2-50). This is set on 10 when the program starts. 
  * 
+ * Every 30 seconds the ESP32 goes through the arrays and plots the min and max values of each sensor.
+ * If one of the criteria for the alarm goes , the program goes into ALARM modus.
  * 
+ * When in ALARM modus: The ALARM led in BLYNK is blinking.
+ *                      Servo motor turns all over to the right and stays in that position.
+ *                      The buzzer start buzzing at an annoying frequency.
  * 
+ * To reset the alarm: The values that created the alarm has to go back to "Normal" and the RESET button in BLYNK has to pressed.
+ * This sets the servomotor back into "normal" modus and goes all the way to the left.
+ * If the RESET button is pressed before the values are back to "Normal" the servo goes all the way to the left but will return back to "Alarm" modus.
  * 
+ * On the BLYNK app theres an "Test" button that test the servomotor by rotating from end to end while it's pressed.
+ * This is going to simulate an safety vaulve to check if its stuck or not. 
  * 
+ * There's an terminal in the BLYNK app that informs you about the status as the microcontroller is running.
  * 
- * 
- * 
+ * As an additional feature the microcontroller are programmed to set up an local website that features the sensorvalues
+ * Theres also and status indicating if its in alarm og normal mode. 
+ * This website refreshes automatically every 10 seconds.
+ *                  
  * 
  */
 #define BLYNK_PRINT Serial
