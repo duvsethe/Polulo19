@@ -75,15 +75,15 @@ void loop() {
 void direct(int x, bool dirTape, bool dirEnd ){
 
   if ( dirTape ){
-    motors.setSpeeds(150,150);
+    motors.setSpeeds(130,150);
   }
   else if ( dirEnd ){
     motors.setSpeeds(0,0);
-    delay(20);
+    delay(200);
     motors.setSpeeds(100, -100);
-    delay(50);
+    delay(200);
     motors.setSpeeds(100,100);
-    delay(50);
+    delay(200);
   }
   //Turning motor to the right
   else if( x < 1500){
