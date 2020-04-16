@@ -1,14 +1,25 @@
+#include <EEPROM.h> //Including EEPROM library
 #include <Zumo32U4.h>
+
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4LCD lcd;
 Zumo32U4Motors motors;
+Zumo32U4LineSensors linesensor;
+Zumo32U4Buzzer buzzer;
+
+
+int account_balance = EEPROM.read(0);
+const int money_deposit = 5; // Fixed amount of money to deposit (when e.g pushing button)
+
 
 int menu = 1;
 
 void setup() {
   lcd.init();
+  linesensor.initFiveSensors();
+
   updateMenu();
 }
 
@@ -45,19 +56,19 @@ void updateMenu() {
       lcd.clear();
       lcd.print(">Line");
       lcd.gotoXY(0, 1);
-      lcd.print("Battery");
+      lcd.print("Account");
       break;
     case 3:
       lcd.clear();
-      lcd.print(">Battery");
+      lcd.print(">Account");
       lcd.gotoXY(0, 1);
-      lcd.print(" Menu4");
+      lcd.print("Battery");
       break;
     case 4:
       lcd.clear();
-      lcd.print("> Menu4");
+      lcd.print(">Battery");
       lcd.gotoXY(0, 1);
-      lcd.print("Menu4");
+      lcd.print(" ");
       break;
     case 5:
       menu = 4;
@@ -92,6 +103,59 @@ void updateMenu() {
     case 14:
       menu = 13;
       break;
+    case 19:
+      menu = 20;
+      break;
+    case 20:
+      lcd.clear();
+      lcd.print(">Standard");
+      lcd.gotoXY(0,1);
+      lcd.print("PID");
+      break;
+    case 21:
+      lcd.clear();
+      lcd.print(">PID");
+      lcd.gotoXY(0,1);
+      lcd.print("Calib");
+      break; 
+    case 22:
+      lcd.clear();
+      lcd.print(">Calib");
+      lcd.gotoXY(0,1);
+      lcd.print("Back");
+      break;
+    case 23:
+      lcd.clear();
+      lcd.print(">Back");
+      lcd.gotoXY(0,1);
+      lcd.print(" ");
+      break;
+    case 24:
+      menu = 23;
+      break;
+    case 29:
+      menu = 30;
+      break;
+    case 30:
+      lcd.clear();
+      lcd.print(">View acc");
+      lcd.gotoXY(0,1);
+      lcd.print("++Cash");
+      break;
+    case 31:
+      lcd.clear();
+      lcd.print(">++Cash");
+      lcd.gotoXY(0,1);
+      lcd.print("Back");
+      break;
+    case 32:
+      lcd.clear();
+      lcd.print(">Back");
+      lcd.gotoXY(0,1);
+      lcd.print(" ");
+      break;
+    case 33:
+      menu = 32;
   }
 }
 
@@ -121,6 +185,27 @@ void executeAction() {
     case 13:
       action13();
       break;
+    case 20:
+      action20();
+      break;
+    case 21:
+      action21();
+      break;
+    case 22:
+      action22();
+      break;
+    case 23:
+      action23();
+      break;
+    case 30:
+      action30();
+      break;
+    case 31:
+      action31();
+      break;
+    case 32:
+      action32();
+      break;
     
       
   }
@@ -149,6 +234,9 @@ void action4() {
 }
 
 void action10(){
+  if ( account_balance >= 10){
+    account_balance -= 10;
+    EEPROM.write(0, account_balance);
     lcd.clear();
     lcd.print(">Turning");
     delay(1500);
@@ -163,13 +251,24 @@ void action10(){
     motors.setSpeeds(200, 200); // drives back to start
     delay(5000);
     motors.setSpeeds(0, 0); // stops car
+  }
+  else{
+    lcd.clear();
+    lcd.print("To low");
+    lcd.gotoXY(0,1);
+    lcd.print("balance");
+    delay(2000);
+  }
 }
 
 void action11(){
-  lcd.clear();
-  lcd.print(">90Degree");
-  delay(1500);
-  for(int i=0;i<4;i++){
+  if ( account_balance >= 10){
+    account_balance -= 10;
+    EEPROM.write(0, account_balance);
+    lcd.clear();
+    lcd.print(">90Degree");
+    delay(1500);
+    for(int i=0;i<4;i++){
       motors.setSpeeds(200, 200); // drives forward
       delay(500);
       motors.setSpeeds(0, 0); // stops car
@@ -178,19 +277,95 @@ void action11(){
       delay(470);
       motors.setSpeeds(0,0);
       delay(500);
-}
+    }
+  }
+  else{
+    lcd.clear();
+    lcd.print("To low");
+    lcd.gotoXY(0,1);
+    lcd.print("balance");
+    delay(2000);
+  }
 }
 
 void action12(){
-  lcd.clear();
-  lcd.print(">Circle");
-  delay(1500);
-  motors.setSpeeds(80, 200); //Begynne svingen
-  delay(3750);
-  motors.setSpeeds(0, 0); // stops car entirely
+  if ( account_balance >= 10){
+    account_balance -= 10;
+    EEPROM.write(0, account_balance);
+    lcd.clear();
+    lcd.print(">Circle");
+    delay(1500);
+    motors.setSpeeds(80, 200); //Start turning
+    delay(3750);
+    motors.setSpeeds(0, 0); // stops car entirely
+  }
+  else{
+    lcd.clear();
+    lcd.print("To low");
+    lcd.gotoXY(0,1);
+    lcd.print("balance");
+    delay(2000);
+  }
 }
 
 void action13(){
+  lcd.clear();
+  menu = 1;
+}
+
+void action20(){
+  lcd.clear();
+  menu = 1;
+}
+
+void action21(){
+  lcd.clear();
+  menu = 1;
+}
+
+void action22(){
+  lcd.clear();
+  lcd.print("Cali -");
+  lcd.gotoXY(0,1);
+  lcd.print("brating");
+  delay(1000);
+  int i = 0;
+  while(i < 100){
+    linesensor.calibrate();
+    motors.setSpeeds(150, -150);
+    i++;
+  }
+  motors.setSpeeds(0,0);
+  buzzer.play(">g32>>c32");
+  lcd.clear();
+}
+
+void action23(){
+  lcd.clear();
+  menu = 1;
+}
+
+void action30(){
+  lcd.clear();
+  lcd.print(EEPROM.read(0));
+  delay(2000);
+}
+
+void action31(){
+  lcd.clear();
+  if ( account_balance <= 250){
+    account_balance += money_deposit;
+   EEPROM.write(0, account_balance);
+  }
+  else{
+    lcd.clear();
+    lcd.print("Account");
+    lcd.gotoXY(0,1);
+    lcd.print("is full!");
+    delay(2000);   
+  }
+}
+void action32(){
   lcd.clear();
   menu = 1;
 }

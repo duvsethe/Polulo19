@@ -19,9 +19,6 @@ void setup() {
   lcd.init();
   lcd.clear();
   lcd.gotoXY(0,0);
-  
-  
-
 }
 
 void loop() {

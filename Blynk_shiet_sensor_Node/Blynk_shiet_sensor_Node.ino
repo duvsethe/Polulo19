@@ -1,4 +1,15 @@
-
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 #define BLYNK_PRINT Serial
 #include <WiFi.h>
 #include <WebServer.h>
@@ -522,46 +533,46 @@ void handle_NotFound(){
 }
 
 String SendHTML(float Temperature,float PhotoRes, float Distance, String Text){
-  String ptr = "<!DOCTYPE html> <html>\n";
-  ptr +="<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
-  ptr +="<title>ESP32 Sensors Readings</title>\n";
-  ptr +="<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}\n";
-  ptr +="body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;}\n";
-  ptr +="p {font-size: 24px;color: #444444;margin-bottom: 10px;}\n";
-  ptr +="</style>\n";
-  ptr +="</head>\n";
-  ptr +="<body>\n";
-  ptr +="<div id=\"webpage\">\n";
-  ptr +="<h1>ESP32 Sensors Readings</h1>\n";
+  String axl = "<!DOCTYPE html> <html>\n";
+  axl +="<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
+  axl +="<title>ESP32 Sensors Readings</title>\n";
+  axl +="<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}\n";
+  axl +="body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;}\n";
+  axl +="p {font-size: 24px;color: #444444;margin-bottom: 10px;}\n";
+  axl +="</style>\n";
+  axl +="</head>\n";
+  axl +="<body>\n";
+  axl +="<div id=\"webpage\">\n";
+  axl +="<h1>ESP32 Sensors Readings</h1>\n";
     
-  ptr +="<p>Temperature: ";
-  ptr +=(int)Temperature;
-  ptr +="C";
-  ptr +="<p>PhotoResistor: ";
-  ptr +=(int)PhotoRes;
-  ptr +="<p>Distance: ";
-  ptr +=(float)Distance;
-  ptr +=" meters";
-  ptr +="<p>Status: ";
-  ptr +=(String)Text;
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="<img src=http://www.agdervent.no/images/logo/bil-agderventilasjon-72dpi-farge.jpg>";//Image
-  ptr +="<br> ";
-  ptr +="<br> ";
-  ptr +="Made by Khuong Huynh";
-  ptr +="</p>";
-  ptr +="<meta http-equiv=refresh content=10>";//Refreshes every 10 sec automatically
+  axl +="<p>Temperature: ";
+  axl +=(int)Temperature;
+  axl +="C";
+  axl +="<p>PhotoResistor: ";
+  axl +=(int)PhotoRes;
+  axl +="<p>Distance: ";
+  axl +=(float)Distance;
+  axl +=" meters";
+  axl +="<p>Status: ";
+  axl +=(String)Text;
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="<img src=http://www.agdervent.no/images/logo/bil-agderventilasjon-72dpi-farge.jpg>";//Image
+  axl +="<br> ";
+  axl +="<br> ";
+  axl +="Made by Khuong Huynh";
+  axl +="</p>";
+  axl +="<meta http-equiv=refresh content=10>";//Refreshes every 10 sec automatically
   
-  ptr +="</div>\n";
-  ptr +="</body>\n";
-  ptr +="</html>\n";
-  return ptr;
+  axl +="</div>\n";
+  axl +="</body>\n";
+  axl +="</html>\n";
+  return axl;
 }
 
 
