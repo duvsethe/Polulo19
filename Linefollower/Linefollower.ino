@@ -75,7 +75,8 @@ void loop() {
 void direct(int x, bool dirTape, bool dirEnd ){
 
   if ( dirTape ){
-    motors.setSpeeds(130,150);
+    motors.setSpeeds(150,150);
+    delay(400);
   }
   else if ( dirEnd ){
     motors.setSpeeds(0,0);
