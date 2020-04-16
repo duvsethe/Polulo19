@@ -9,6 +9,7 @@ Zumo32U4Buzzer buzzer;
 
 //Creating int value for sensvaluer
 unsigned int linesensorValues[5];
+int tapeNum = 0;
 
 void setup() {
   //Buzzer sound for when upload is finished
@@ -51,40 +52,37 @@ void setup() {
 void loop() {
   //Reads linesensor value
    int position = linesensor.readLine(linesensorValues);
-   bool deadEnd = false;
-   bool noTape = false;
-   
-
-   if ( linesensorValues[0] <= 2 && linesensorValues[1] <= 2 && linesensorValues[2] <= 2 && linesensorValues[3] <= 2 && linesensorValues[4] <= 2 ){
-    noTape = true;
-   }
+   bool myTape = false;
+  
    
    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
-    deadEnd = true;
+    myTape = true;
    }
    
    //Prints linesensors value on lcd
    lcd.print(position);
    lcd.gotoXY(0,0);
    //Using function to choose motorpower
-   direct(position, noTape, deadEnd);
+   direct(position, myTape, tapeNum);
    delay(50);
    }
 
 //Function for choosing speed on motors
-void direct(int x, bool dirTape, bool dirEnd ){
+void direct(int x, bool myTape, bool tapeNum ){
 
-  if ( dirTape ){
+  if ( myTape && tapeNum == 0 ){
     motors.setSpeeds(150,150);
-    delay(100);
+    delay(400);
+    tapeNum = 1;
   }
-  else if ( dirEnd ){
+  else if ( myTape && tapeNum == 1 ){
     motors.setSpeeds(0,0);
     delay(200);
     motors.setSpeeds(100, -100);
     delay(1800);
     motors.setSpeeds(100,100);
     delay(200);
+    tapeNum = 0;
   }
   //Turning motor to the right
   else if( x < 1500){
