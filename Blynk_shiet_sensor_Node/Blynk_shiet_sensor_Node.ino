@@ -3,6 +3,8 @@
  * It then test the servomotor by going side to side and calibrate the photoresistor.
  * This program uses timer intervals to call different functiong that reads the sensorvalues.
  *  
+ * In the BLYNK app you can decide which of the sensors you want to start reading values from.
+ * When you start up the microcontroller all of these are normally on
  * The microcontroller are saving the sensorvalues into arrays and visualising them in a SuperChart, Gauges, Labeled Displays and LED's
  * in live time on the BLYNK app. The arrays can save 50 values, after that it starts replacing the older values. 
  * 
@@ -29,6 +31,53 @@
  * Theres also and status indicating if its in alarm og normal mode. 
  * This website refreshes automatically every 10 seconds.
  *                  
+ * 
+ * List of usage of Virtual Pins on BLYNK
+ * V0 = Green LED for Tiltsensor
+ * V1 = Red LED for TiltSensor
+ * V2 = Red LED for Alarm
+ * V3 = 
+ * V4 = 
+ * V5 = 
+ * V6 = 
+ * V7 = Reset button for Servo
+ * V8 = Slider for choosing how many "points" to calculate average values
+ * V9 = Terminal
+ * V10 = Temperature Labeled Value
+ * V11 = Temperature Gauge
+ * V12 = Temperature Live Value Chart
+ * V13 = Temperatue Average Chart
+ * V14 = Temperature Max Value Chart
+ * V15 = Temperature Min Vakue chart
+ * V16 = Temperature On/Off Menu
+ * V17 = 
+ * V20 = Photoresistor Labeled Value
+ * V21 = Photoresistor Gauge
+ * V22 = Photoresistor Live Value Chart
+ * V23 = Photoresistor Average Chart
+ * V24 = Photoresistor Max Value Chart
+ * V25 = Photoresistor Min Value Chart
+ * V26 = Photoresistor On/Off Menu
+ * V27 = 
+ * V30 = 
+ * V31 = 
+ * V32 = Tilt Live Value Chart
+ * V33 = 
+ * V34 = Tilt Max/Min Value Chart
+ * V35
+ * V36 = Tilt On/Off Menu
+ * V37
+ * V40 = Distance Labeled Value
+ * V41 = Distance Gauge
+ * V42 = Distance Live Value Chart
+ * V43 = Distance Average Chart
+ * V44 = Distance Max Value Chart
+ * V45 = Distance Min Value Chart
+ * V46 = Distance On/Off Menu
+ * V47
+ * V99 = Test Button For ServoMotor
+ * 
+
  * 
  */
 #define BLYNK_PRINT Serial
@@ -66,7 +115,7 @@ const int pinPhoto = 33;
 const int pinTilt = 14;
 const int pinTrig = 0;
 const int pinEcho = 4;
-const int buzzer = 27;
+const int buzzer = 35;
 
 //Raw values from sensors
 bool valTilt;
@@ -75,6 +124,12 @@ int numReadings = 10;
 float tempC;
 int valPhoto;
 float valDistance;
+
+//Boolean values for sensor if they have been "turned" on from BLYNK
+bool onTemp = true;
+bool onPhoto = true;
+bool onTilt = true;
+bool onDistance = true;
 
 //Values for calibrating Photoresistor
 int minPhoto = 1023;
@@ -91,7 +146,7 @@ float averageTemp;
 float averageDistance;
 
 
-//Array values
+//Array & alarm values
 float readingsTemp[50];
 int readingsPhoto[50];
 int readingsTilt[50];
@@ -119,7 +174,7 @@ int servoResetVal = 0;
 void myTimerEvent1()
 {
   //Reading temp value and writing to Blynk
-  if( !testButton){
+  if( !testButton && onTemp){
   valTemp = analogRead(pinTemp);
   float volt = (valTemp / 1023.0);
   tempC = (volt - 0.5) * 100; // converting into Celsius
@@ -133,7 +188,7 @@ void myTimerEvent1()
 }
 
 void myTimerEvent2() {
-  if( !testButton){
+  if( !testButton && onPhoto){
   //Reads, maps and constrains Fhotoresistor value
   valPhoto = analogRead(pinPhoto);
   valPhoto = map(valPhoto, minPhoto, maxPhoto, 0, 255);
@@ -148,7 +203,7 @@ void myTimerEvent2() {
 }
 
 void myTimerEvent3() {
-  if( !testButton){
+  if( !testButton && onTilt){
   //Reading value of tiltsensor
   valTilt = digitalRead(pinTilt);
   if (valTilt == true) {
@@ -170,7 +225,7 @@ void myTimerEvent3() {
 
 void myTimerEvent4(){
   //Calculate the distace
-  if( !testButton){
+  if( !testButton && onDistance){
   valDistance = ultraSonic();
   valDistance = constrain(valDistance, 2, 400); //Constrain for min and max value
   readingsDistance[readIndexDistance] = valDistance; //Saving the Distance into an array
@@ -285,13 +340,11 @@ void myTimerEvent7(){
   //Testing does not work if theres an alarm active
   if ( alarmNumb == 0 && testButton == 1){
     if( servoEndPos == 0){
-      Serial.println("test");
       myservo.write(servoPos);
       servoPos += 1;
       if ( servoPos == 180) servoEndPos = 1;
     }
      else if (servoEndPos == 1){
-      Serial.println("test2");
       myservo.write(servoPos);
       servoPos -= 1;
       if (servoPos == 0) servoEndPos = 0;
@@ -300,6 +353,7 @@ void myTimerEvent7(){
 }
 
 void myTimerEvent8(){
+  //Blinking LED if theres an alarm on the system
   if ( alarmNumb != 0){
     if (led3.getValue()){
       led3.off();
@@ -315,13 +369,76 @@ void myTimerEvent8(){
 
 
 
+BLYNK_WRITE(V16){
+  switch ( param.asInt())
+  {
+    case 1:
+      onTemp = true;
+      terminal.print("Temperature readings ON");
+      terminal.flush();
+      break;
+    case 2:
+      onTemp = false;
+      terminal.print("Temperature readings OFF");
+      terminal.flush();
+      break;
+  }
+}
+
+BLYNK_WRITE(V26){
+  switch ( param.asInt())
+  {
+    case 1:
+      onPhoto = true;
+      terminal.print("Photoresistor readings ON");
+      terminal.flush();
+      break;
+    case 2:
+      onPhoto = false;
+      terminal.print("Photoresistor readings OFF");
+      terminal.flush();
+      break;
+  }
+}
+
+BLYNK_WRITE(V36){
+  switch ( param.asInt())
+  {
+    case 1:
+      onTilt = true;
+      terminal.print("Tilt readings ON");
+      terminal.flush();
+      break;
+    case 2:
+      onTilt = false;
+      terminal.print("Tilt readings OFF");
+      terminal.flush();
+      break;
+  }
+}
+
+BLYNK_WRITE(V46){
+  switch ( param.asInt())
+  {
+    case 1:
+      onDistance = true;
+      terminal.print("Distance readings ON");
+      terminal.flush();
+      break;
+    case 2:
+      onDistance = false;
+      terminal.print("Distance readings OFF");
+      terminal.flush();
+      break;
+  }
+}
+
 BLYNK_WRITE(V7) {
   //Resetting buzzer and LED alarms
   if( param.asInt()){
     servoReset();
     Serial.println("Alarm reset");
   }
-  
 }
 
 BLYNK_WRITE(V8) {
@@ -336,7 +453,6 @@ BLYNK_WRITE(V8) {
 BLYNK_WRITE(V99){
   //Test button for servomotr
   testButton  = param.asInt();
- 
 }
 
 
@@ -440,6 +556,8 @@ void setup()
 }
 
 
+//This section of code contains different function that are used by the timer intervals
+
 float ultraSonic(){
   //Function for the SR-HC04 sensor
   float duration = 0;
@@ -489,6 +607,7 @@ void alarmSwitch(int alarmNumb){
   
   switch( alarmNumb ){
     case 0:
+      servoReset();
 
       break;
       //Temp and Photo alarm
@@ -537,6 +656,8 @@ void servoReset(){
   servoPos = servoResetVal;
 }
 
+//Section of code for creating the local website
+
 void handle_OnConnect() {
   //If connection is made, sends values to create HTML webserver
   float Temperature = averageTemp; // Gets the values of the temperature
@@ -573,7 +694,7 @@ String SendHTML(float Temperature,float PhotoRes, float Distance, String Text){
   axl +=(int)PhotoRes;
   axl +="<p>Distance: ";
   axl +=(float)Distance;
-  axl +=" meters";
+  axl +=" cm";
   axl +="<p>Status: ";
   axl +=(String)Text;
   axl +="<br> ";
