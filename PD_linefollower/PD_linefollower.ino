@@ -79,8 +79,8 @@ void loop() {
 
 void blackTape(){
   if( myTape == 0 ){
-    motors.setSpeeds(200,200);
-    delay(200);
+    motors.setSpeeds(100,100);
+    delay(2000);
     myTape = 1;
   }
   else if ( myTape == 1){
@@ -90,6 +90,13 @@ void blackTape(){
     delay(1800);
     motors.setSpeeds(100,100);
     delay(200);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100, -100);
+    delay(900);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100,100);
     myTape = 0;
   }
 
