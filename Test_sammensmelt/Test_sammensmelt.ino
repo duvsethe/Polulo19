@@ -352,7 +352,7 @@ void action21(){
     //Motor output
     if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800){
       motors.setSpeeds(0,0);
-      delay(1000);
+      delay(500);
       if ( buttonB.isPressed()){
       linePID = false;  
       break;
