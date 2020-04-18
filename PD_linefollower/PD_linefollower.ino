@@ -73,7 +73,7 @@ void loop() {
    }
    motors.setSpeeds(leftSpeed, rightSpeed);
    //Prints linesensors on lcd
-   lcd.print(position);
+   lcd.print(myTape);
    lcd.gotoXY(0,0);
 }
 
