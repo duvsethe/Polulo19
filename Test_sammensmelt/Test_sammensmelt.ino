@@ -350,7 +350,7 @@ void action21(){
     leftSpeed = constrain(leftSpeed, 0, (int)maxSpeed);
     rightSpeed = constrain(rightSpeed, 0, (int)maxSpeed);
     //Motor output
-    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
+    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 && !buttonB.isPressed ){
      blackTape();
      }
     motors.setSpeeds(leftSpeed, rightSpeed);
