@@ -335,7 +335,10 @@ void action21(){
   delay(1000);
   while ( linePID ){
       //Reads linesensor value and "error"
-    if ( buttonB.isPressed()) linePID = false;  
+    if ( buttonB.isPressed()){
+      linePID = false;  
+      break;
+    }
     int position = linesensor.readLine(linesensorValues);
     int e = position - 2000; 
      //Calculating speed difference & setting speed
@@ -366,7 +369,7 @@ void action21(){
 }
 
 void blackTape(){
-  if( myTape == 0 ){
+  if( myTape == 0  ){
     motors.setSpeeds(100,100);
     delay(2000);
     myTape = 1;
