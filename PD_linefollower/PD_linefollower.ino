@@ -14,6 +14,8 @@ const double P = 0.3;
 const double D = 8;
 double lastE = 0;
 const unsigned char maxSpeed = 200;
+int myTape = 0;
+
 
 void setup() {
   //Buzzer sound for when upload is finished
@@ -65,8 +67,32 @@ void loop() {
    leftSpeed = constrain(leftSpeed, 0, (int)maxSpeed);
    rightSpeed = constrain(rightSpeed, 0, (int)maxSpeed);
    //Motor output
+   if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
+    blackTape();
+    
+   }
    motors.setSpeeds(leftSpeed, rightSpeed);
    //Prints linesensors on lcd
    lcd.print(position);
    lcd.gotoXY(0,0);
+}
+
+void blackTape(){
+  if( myTape == 0 ){
+    motors.setSpeeds(200,200);
+    delay(200);
+    myTape = 1;
+  }
+  else if ( myTape == 1){
+    motors.setSpeeds(0,0);
+    delay(200);
+    motors.setSpeeds(100, -100);
+    delay(1800);
+    motors.setSpeeds(100,100);
+    delay(200);
+    myTape = 0;
+  }
+
+
+  
 }
