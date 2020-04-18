@@ -334,7 +334,7 @@ void action21(){
   delay(1000);
   while ( linePID ){
       //Reads linesensor value and "error"
-    if ( buttonB.isPressed()) linePID = false;  
+    if ( buttonB.getSingleDebouncedPress()) linePID = false;  
     int position = linesensor.readLine(linesensorValues);
     int e = position - 2000; 
      //Calculating speed difference & setting speed
