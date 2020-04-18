@@ -10,8 +10,18 @@ Zumo32U4LineSensors linesensor;
 Zumo32U4Buzzer buzzer;
 
 
+//Creating int value for sensvaluer
+unsigned int linesensorValues[5];
+
 int account_balance = EEPROM.read(0);
 const int money_deposit = 5; // Fixed amount of money to deposit (when e.g pushing button)
+
+const double P = 0.3;
+const double D = 8;
+double lastE = 0;
+const unsigned char maxSpeed = 200;
+int myTape = 0;
+bool linePID = false;
 
 
 int menu = 1;
@@ -320,8 +330,64 @@ void action20(){
 
 void action21(){
   lcd.clear();
+  linePID = true;
+  delay(1000);
+  while ( linePID ){
+      //Reads linesensor value and "error"
+    if ( buttonB.isPressed()) linePID = false;  
+    int position = linesensor.readLine(linesensorValues);
+    int e = position - 2000; 
+     //Calculating speed difference & setting speed
+    int u = P * e + D *(e-lastE);
+    lastE = e;
+    int leftSpeed = (int)maxSpeed + u;
+    int rightSpeed = (int)maxSpeed - u;
+    //Contraining our motors between 0 and maxspeed
+    leftSpeed = constrain(leftSpeed, 0, (int)maxSpeed);
+    rightSpeed = constrain(rightSpeed, 0, (int)maxSpeed);
+    //Motor output
+    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
+     blackTape();
+     }
+    motors.setSpeeds(leftSpeed, rightSpeed);
+    //Prints linesensors on lcd
+    lcd.print(myTape);
+    lcd.gotoXY(0,0);
+}
+  motors.setSpeeds(0,0);
+  lcd.clear();
+  lcd.gotoXY(0,0);
+  lcd.print("Back to");
+  lcd.gotoXY(0,1);
+  lcd.print("Meny");
+  delay(1000);
   menu = 1;
 }
+
+void blackTape(){
+  if( myTape == 0 ){
+    motors.setSpeeds(100,100);
+    delay(2000);
+    myTape = 1;
+  }
+  else if ( myTape == 1){
+    motors.setSpeeds(0,0);
+    delay(200);
+    motors.setSpeeds(100, -100);
+    delay(1800);
+    motors.setSpeeds(100,100);
+    delay(200);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100, -100);
+    delay(900);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100,100);
+    myTape = 0;
+  }
+}
+
 
 void action22(){
   lcd.clear();
