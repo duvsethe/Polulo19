@@ -331,10 +331,11 @@ void action20(){
 void action21(){
   lcd.clear();
   linePID = true;
+  myTape = 0;
   delay(1000);
   while ( linePID ){
       //Reads linesensor value and "error"
-    if ( buttonB.getSingleDebouncedPress()) linePID = false;  
+    if ( buttonB.isPressed()) linePID = false;  
     int position = linesensor.readLine(linesensorValues);
     int e = position - 2000; 
      //Calculating speed difference & setting speed
