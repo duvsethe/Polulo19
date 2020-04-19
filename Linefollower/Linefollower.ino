@@ -73,14 +73,14 @@ void loop() {
    }
 
 //Function for choosing speed on motors
-void direct(int x, bool myTape, bool tapeNum ){
+void direct(int x, bool myTape, int Num ){
 
-  if ( myTape && tapeNum == 0 ){
+  if ( myTape && Num == 0 ){
     motors.setSpeeds(100,100);
     delay(2000);
     tapeNum = 1;
   }
-  else if ( myTape && tapeNum == 1 ){
+  else if ( myTape && Num == 1 ){
     motors.setSpeeds(0,0);
     delay(200);
     motors.setSpeeds(100, -100);
