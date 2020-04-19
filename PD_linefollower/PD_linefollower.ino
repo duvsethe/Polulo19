@@ -89,7 +89,7 @@ void blackTape(){
     motors.setSpeeds(100, -100);
     delay(1800);
     motors.setSpeeds(100,100);
-    delay(200);
+    delay(1800);
     motors.setSpeeds(0,0);
     delay(20);
     motors.setSpeeds(100, -100);
