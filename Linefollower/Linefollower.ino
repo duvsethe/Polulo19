@@ -109,16 +109,16 @@ void direct(int x, bool myTape, int Num ){
     motors.setSpeeds(50,175);
   }
   else if( x > 2500){
-    motors.setSpeeds(175, 50);
+    motors.setSpeeds(175, 0);
   }
   else if( x > 2400){
-    motors.setSpeeds(175, 40);
-  }
-  else if( x > 2300){
     motors.setSpeeds(175, 20);
   }
+  else if( x > 2300){
+    motors.setSpeeds(175, 40);
+  }
   else if( x > 2200){
-    motors.setSpeeds(175, 0);
+    motors.setSpeeds(175, 50);
   }
   //Straight forward
   else{
