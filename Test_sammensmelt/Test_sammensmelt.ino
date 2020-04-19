@@ -29,7 +29,6 @@ int menu = 1;
 void setup() {
   lcd.init();
   linesensor.initFiveSensors();
-
   updateMenu();
 }
 
