@@ -331,7 +331,10 @@ void action20(){
   while ( lineSTD ){
     int position = linesensor.readLine(linesensorValues);
     bool myTape = false;
-  
+    if ( buttonB.isPressed()){
+      lineSTD = false;  
+      break;
+    }
    
     if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
       motors.setSpeeds(0,0);
