@@ -338,7 +338,7 @@ void action20(){
       delay(500);
       myTape = true;
       if ( buttonB.isPressed()){
-        linePID = false;  
+        lineSTD = false;  
         break;
       }
     }
