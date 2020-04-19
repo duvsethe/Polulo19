@@ -20,8 +20,9 @@ const double P = 0.3;
 const double D = 8;
 double lastE = 0;
 const unsigned char maxSpeed = 200;
-int myTape = 0;
+int tapeNum = 0;
 bool linePID = false;
+bool lineSTD = false;
 
 
 int menu = 1;
@@ -324,13 +325,97 @@ void action13(){
 
 void action20(){
   lcd.clear();
+  lineSTD = true;
+  tapeNum = 0;
+  delay(1000);
+  while ( lineSTD ){
+    int position = linesensor.readLine(linesensorValues);
+    bool myTape = false;
+  
+   
+    if ( linesensorValues[0] >= 800 && linesensorValues[1] >= 800 && linesensorValues[2] >= 800 && linesensorValues[3] >=800 && linesensorValues[4] >=800 ){
+      motors.setSpeeds(0,0);
+      delay(500);
+      myTape = true;
+      if ( buttonB.isPressed()){
+        linePID = false;  
+        break;
+      }
+    }
+    
+   //Prints linesensors value on lcd
+   lcd.gotoXY(0,0);
+   lcd.print(position);
+   lcd.gotoXY(0,1);
+   lcd.print(tapeNum);
+   
+   //Using function to choose motorpower
+   direct(position, myTape, tapeNum);
+   delay(50);
+  }
+  
   menu = 1;
+}
+
+
+void direct(int x, bool myTape, int Num ){
+
+  if ( myTape && Num == 0 ){
+    motors.setSpeeds(100,100);
+    delay(2000);
+    tapeNum = 1;
+  }
+  else if ( myTape && Num == 1 ){
+    motors.setSpeeds(0,0);
+    delay(200);
+    motors.setSpeeds(100, -100);
+    delay(1800);
+    motors.setSpeeds(100,100);
+    delay(1800);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100, -100);
+    delay(900);
+    motors.setSpeeds(0,0);
+    delay(20);
+    motors.setSpeeds(100,100);
+    tapeNum = 0;
+  }
+  else if( x < 1500){
+    motors.setSpeeds(0,175);
+  }
+  else if( x < 1600){
+    motors.setSpeeds(20,175);
+  }
+  else if( x < 1700){
+    motors.setSpeeds(40,175);
+  }
+  else if( x < 1800){
+    motors.setSpeeds(50,175);
+  }
+  else if( x > 2500){
+    motors.setSpeeds(175, 0);
+  }
+  else if( x > 2400){
+    motors.setSpeeds(175, 20);
+  }
+  else if( x > 2300){
+    motors.setSpeeds(175, 40);
+  }
+  else if( x > 2200){
+    motors.setSpeeds(175, 50);
+  }
+  //Straight forward
+  else{
+    motors.setSpeeds(150,150);
+  }
+
 }
 
 void action21(){
   lcd.clear();
   linePID = true;
-  myTape = 0;
+  tapeNum = 0;
   delay(1000);
   while ( linePID ){
       //Reads linesensor value and "error"
@@ -360,7 +445,7 @@ void action21(){
      }
     motors.setSpeeds(leftSpeed, rightSpeed);
     //Prints linesensors on lcd
-    lcd.print(myTape);
+    lcd.print(tapeNum);
     lcd.gotoXY(0,0);
 }
   motors.setSpeeds(0,0);
@@ -374,12 +459,12 @@ void action21(){
 }
 
 void blackTape(){
-  if( myTape == 0  ){
+  if( tapeNum == 0  ){
     motors.setSpeeds(100,100);
     delay(2000);
-    myTape = 1;
+    tapeNum = 1;
   }
-  else if ( myTape == 1){
+  else if ( tapeNum == 1){
     motors.setSpeeds(0,0);
     delay(200);
     motors.setSpeeds(100, -100);
@@ -393,7 +478,7 @@ void blackTape(){
     motors.setSpeeds(0,0);
     delay(20);
     motors.setSpeeds(100,100);
-    myTape = 0;
+    tapeNum = 0;
   }
 }
 
@@ -422,6 +507,8 @@ void action23(){
 
 void action30(){
   lcd.clear();
+  lcd.print("Balance:");
+  lcd.gotoXY(0,1);
   lcd.print(EEPROM.read(0));
   delay(2000);
 }
@@ -431,6 +518,10 @@ void action31(){
   if ( account_balance <= 250){
     account_balance += money_deposit;
    EEPROM.write(0, account_balance);
+  lcd.clear();
+  lcd.print("Balance:");
+  lcd.gotoXY(0,1);
+  lcd.print(EEPROM.read(0));
   }
   else{
     lcd.clear();
