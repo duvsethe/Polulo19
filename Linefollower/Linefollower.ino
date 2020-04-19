@@ -78,7 +78,7 @@ void direct(int x, bool myTape, bool tapeNum ){
   if ( myTape && tapeNum == 0 ){
     motors.setSpeeds(100,100);
     delay(2000);
-    myTape = 1;
+    tapeNum = 1;
   }
   else if ( myTape && tapeNum == 1 ){
     motors.setSpeeds(0,0);
@@ -94,7 +94,7 @@ void direct(int x, bool myTape, bool tapeNum ){
     motors.setSpeeds(0,0);
     delay(20);
     motors.setSpeeds(100,100);
-    myTape = 0;
+    tapeNum = 0;
   }
   //Turning motor to the right
   else if( x < 1500){
