@@ -96,13 +96,29 @@ void direct(int x, bool myTape, int Num ){
     motors.setSpeeds(100,100);
     tapeNum = 0;
   }
-  //Turning motor to the right
   else if( x < 1500){
-    motors.setSpeeds(-50,175);
+    motors.setSpeeds(0,175);
   }
-  //Turning motor to the left
+  else if( x < 1600){
+    motors.setSpeeds(20,175);
+  }
+  else if( x < 1700){
+    motors.setSpeeds(40,175);
+  }
+  else if( x < 1800){
+    motors.setSpeeds(50,175);
+  }
   else if( x > 2500){
-    motors.setSpeeds(175, -50);
+    motors.setSpeeds(175, 50);
+  }
+  else if( x > 2400){
+    motors.setSpeeds(175, 40);
+  }
+  else if( x > 2300){
+    motors.setSpeeds(175, 20);
+  }
+  else if( x > 2200){
+    motors.setSpeeds(175, 0);
   }
   //Straight forward
   else{
