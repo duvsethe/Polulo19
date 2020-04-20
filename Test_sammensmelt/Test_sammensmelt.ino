@@ -356,7 +356,13 @@ void action20(){
    direct(position, myTape, tapeNum);
    delay(50);
   }
-  
+  motors.setSpeeds(0,0);
+  lcd.clear();
+  lcd.gotoXY(0,0);
+  lcd.print("Back to");
+  lcd.gotoXY(0,1);
+  lcd.print("Meny");
+  delay(1000);
   menu = 1;
 }
 
