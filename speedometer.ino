@@ -12,6 +12,7 @@ unsigned long one_minute = 60000;
 float meters = 0;
 float meters_per_second = 0;
 float average_speed = 0;
+float meters_per_minute = 0;
 
 float maxSpeed = 0;
 
@@ -63,14 +64,20 @@ void loop() {
   if((millis()-last_minute) >= one_minute){
 
     unsigned long my_time = millis()-last_minute;
+
+    meters_per_minute = meters;
     
-    average_speed = (meters/my_time)*1000; // regner ut gjennomsnittshastighet i m/s
+    average_speed = (meters_per_minute/my_time)*1000; // regner ut gjennomsnittshastighet i m/s
 
     lcd.clear();
     lcd.gotoXY(0,0);
     lcd.print("M:" + String(maxSpeed) + "m/s"); // printer ut maks hastighet hvert minutt
     lcd.gotoXY(0,1);
     lcd.print("A:" + String(average_speed) + "m/s"); // printer ut gjennomsnittshastighet hvert minutt 
+
+    meters_per_minute = 0;
+
+    maxSpeed = 0;
     
     last_minute = millis();
   }
