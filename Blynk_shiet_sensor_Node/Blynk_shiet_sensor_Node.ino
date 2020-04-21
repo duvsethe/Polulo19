@@ -115,7 +115,6 @@ const int pinPhoto = 33;
 const int pinTilt = 14;
 const int pinTrig = 0;
 const int pinEcho = 4;
-const int buzzer = 35;
 
 //Raw values from sensors
 bool valTilt;
@@ -159,6 +158,9 @@ int testButton = 0;
 int servoEndPos = 0;
 int servoPos = 0;
 int alarmNumb = 0;
+int freq = 1000;
+int channel = 0;
+int resolution = 8;
 
 //Alarm limits
 int tempAlarm_Limit = 30;
@@ -493,6 +495,10 @@ void setup()
   //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
   Blynk.begin(auth, ssid, pass, IPAddress(91, 192, 221, 40), 8080);
 
+  //Attach pin to buzzer
+  ledcSetup(channel, freq, resolution);
+  ledcAttachPin(35, channel);
+
   //Attach pin to servomotor, and test the motor
   myservo.attach(12);
   for ( int i = 0; i <=180; i++){
@@ -647,6 +653,7 @@ void servoAlarm(){
   myservo.write(servoAlarmVal);
   servoEndPos = 1; //Signalising what end position servo is in
   servoPos = servoAlarmVal;  
+  ledcWrite(channel, 1000);
 }
 
 void servoReset(){
@@ -654,6 +661,7 @@ void servoReset(){
   myservo.write(servoResetVal);
   servoEndPos = 0; //Signalising what end position servo is in
   servoPos = servoResetVal;
+  ledcWrite(channel, 0);
 }
 
 //Section of code for creating the local website
