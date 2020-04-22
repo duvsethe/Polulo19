@@ -85,6 +85,7 @@ void coneDrive (){
       motors.setSpeeds(0,0);
       stepNum = 0;
       coneNum = 0;
+      drive = false;
     }
   }
 
