@@ -42,6 +42,7 @@ void loop() {
   if ( buttonA.isPressed()){
    while ( stepNum == 0){
     motors.setSpeeds(100, -100);
+    angle = getAngle();
     if (angle >= 55){
       motors.setSpeeds(0,0);
       stepNum = 1;
@@ -50,6 +51,7 @@ void loop() {
    }
    while ( stepNum == 1){
     motors.setSpeeds(100, 150);
+    angle = getAngle();
     if (angle <= -55){
       stepNum = 2;
       break;
@@ -57,6 +59,7 @@ void loop() {
    }
    while ( stepNum == 2){
     motors.setSpeeds(150, 100);
+    angle = getAngle();
     if (angle >= 55){
       stepNum = 1;
       break;
