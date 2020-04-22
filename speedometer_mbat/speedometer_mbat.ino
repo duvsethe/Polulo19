@@ -1,10 +1,13 @@
 //#include <Zumo32U4.h>
 #include "Zumo32U4Dummy.h"
 #include "math.h"
-#include "wire.h"
+//#include "wire.h"
 Zumo32U4Motors motors;
 Zumo32U4LCD lcd;
 Zumo32U4Encoders encoders(&motors);  
+
+int yellowLed = 13;
+int redLed = 17;
  
 unsigned long last_time = 0;
 unsigned long last_ten_sec = 0;
@@ -50,6 +53,10 @@ int batteryCalc(float batteryLevel, float motorSpeed)
 
 
 void setup() {  
+
+  pinMode(yellowLed, OUTPUT);
+  pinMode(redLed, OUTPUT);
+  
   Serial.begin(9600);
   motors.setSpeeds(left_speed, right_speed);
 }
@@ -127,30 +134,29 @@ void loop() {
   }
 
     
-  if (batteryLevel > 10) 
+if (batteryLevel > 10) 
   { 
-    ledRed(0); 
-    ledYellow(0); 
-    ledGreen(1); 
+ digitalWrite(yellowLed, LOW);
+ digitalWrite(redLed, HIGH); 
   }
-  if else (batteryLevel > 5)
+
+else if (batteryLevel > 5)
   {
-    ledRed(0); 
-    ledYellow(1); 
-    ledGreen(0); 
+ digitalWrite(yellowLed, HIGH);
+ digitalWrite(redLed, HIGH);
   }
-  if else (batteryLevel < 0) 
+
+else if (batteryLevel > 0) 
   { 
-    ledRed(1); 
-    ledYellow(0); 
-    ledGreen(0); 
+ digitalWrite(yellowLed, LOW);
+ digitalWrite(redLed, LOW);
+ 
   }
-  else (batteryLevel == 0 )
+else if (batteryLevel == 0 )
   { 
     motors.setSpeeds(0 , 0); 
-    ledRed(0); 
-    ledYellow(0); 
-    ledGreen(0); 
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(redLed, HIGH);
   }
       
 }
