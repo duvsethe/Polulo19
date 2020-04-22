@@ -42,6 +42,7 @@ void loop() {
   if ( buttonA.isPressed()){
    while ( stepNum == 0){
     motors.setSpeeds(50, -50);
+    turnSensorUpdate();
     angle = getAngle();
     lcd.gotoXY(0, 0);
     lcd.print(angle);
@@ -54,6 +55,7 @@ void loop() {
    }
    while ( stepNum == 1){
     motors.setSpeeds(100, 150);
+    turnSensorUpdate();
     angle = getAngle();
     lcd.gotoXY(0, 0);
     lcd.print(angle);
@@ -65,6 +67,7 @@ void loop() {
    }
    while ( stepNum == 2){
     motors.setSpeeds(150, 100);
+    turnSensorUpdate();
     angle = getAngle();
     lcd.gotoXY(0, 0);
     lcd.print(angle);
