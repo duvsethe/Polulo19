@@ -12,6 +12,7 @@ Zumo32U4ButtonB buttonB;
 
 
 int stepNum = 0;
+int coneNum = 0;
 bool drive = false;
 
 
@@ -46,6 +47,7 @@ void loop() {
   }
   if ( buttonB.isPressed()){
     drive = false;
+    
   }
 
   if ( drive){
@@ -77,13 +79,24 @@ void coneDrive (){
     }
   }
 
-  if (stepNum == 1){
+  if (coneNum >= 2){
+    motors.setSpeeds(100,200);
+    if ( angle >= 0){
+      motors.setSpeeds(0,0);
+      stepNum = 0;
+      coneNum = 0;
+    }
+  }
+
+  else if (stepNum == 1){
     motors.setSpeeds(200, 100);
     if ( angle <= -55){
       stepNum = 2;
+      coneNum += 1;
+
     }
   }
-  if (stepNum == 2){
+  else if (stepNum == 2){
     motors.setSpeeds(100,200);
     if (angle >= 55){
       stepNum = 1;
