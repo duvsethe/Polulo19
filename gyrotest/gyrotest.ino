@@ -6,6 +6,10 @@
 
 L3G gyro;
 Zumo32U4LCD lcd;
+Zumo32U4Motors motors;
+Zumo32U4ButtonA buttonA;
+
+int stepNum = 0;
 
 // --- Helper functions
 int32_t getAngle() {
@@ -29,9 +33,35 @@ void loop() {
   // Read the sensors
   turnSensorUpdate();
   int32_t angle = getAngle();
-
+  
   // Update the display
   lcd.gotoXY(0, 0);
   lcd.print(angle);
   lcd.print(" ");
+
+  if ( buttonA.isPressed()){
+   while ( stepNum == 0){
+    motors.setSpeeds(100, -100);
+    if (angle >= 55){
+      motors.setSpeeds(0,0);
+      stepNum = 1;
+      break;
+    }
+   }
+   while ( stepNum == 1){
+    motors.setSpeeds(100, 150);
+    if (angle <= -55){
+      stepNum = 2;
+      break;
+      }
+   }
+   while ( stepNum == 2){
+    motors.setSpeeds(150, 100);
+    if (angle >= 55){
+      stepNum = 1;
+      break;
+    }
+   }
+  }
 }
+ 
