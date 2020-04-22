@@ -155,7 +155,7 @@ else if (batteryLevel >= 80)
  //digitalWrite(yellowLed, HIGH);
 // digitalWrite(redLed, HIGH);
  ledYellow(1);
- ledRed(1);
+ ledRed(0);
  ledGreen(0);
   }
 
@@ -173,7 +173,8 @@ else if (batteryLevel == 0 )
   //digitalWrite(yellowLed, LOW);
   //digitalWrite(redLed, HIGH);
   ledYellow(0);
-  ledRed(1);
+  ledRed(0);
+  ledGreen(0)
   }
       
 }
