@@ -8,8 +8,12 @@ L3G gyro;
 Zumo32U4LCD lcd;
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
+Zumo32U4ButtonB buttonB;
+
 
 int stepNum = 0;
+bool drive = false;
+
 
 // --- Helper functions
 int32_t getAngle() {
@@ -18,6 +22,9 @@ int32_t getAngle() {
   // last sensor reset.
   return (((int32_t)turnAngle >> 16) * 360) >> 16;
 }
+
+int32_t angle = getAngle();
+
 
 // --- Setup Method
 void setup() {
@@ -32,15 +39,31 @@ void loop() {
   
   // Read the sensors
   turnSensorUpdate();
-  int32_t angle = getAngle();
-  
+  angle = getAngle();
+  if ( buttonA.isPressed()){
+    drive = true;
+    stepNum = 0;
+  }
+  if ( buttonB.isPressed()){
+    drive = false;
+  }
+
+  if ( drive){
+    coneDrive();
+  }
   // Update the display
   lcd.gotoXY(0, 0);
   lcd.print(angle);
   lcd.print(" ");
+  
+  
+}
 
-  if ( buttonA.isPressed()){
-   while ( stepNum == 0){
+
+
+void coneDrive (){
+  
+  while ( stepNum == 0){
     motors.setSpeeds(-100, 100);
     turnSensorUpdate();
     angle = getAngle();
@@ -52,31 +75,18 @@ void loop() {
       stepNum = 1;
       break;
     }
-   }
-   while ( stepNum == 1){
-    motors.setSpeeds(200, 150);
-    turnSensorUpdate();
-    angle = getAngle();
-    lcd.gotoXY(0, 0);
-    lcd.print(angle);
-    lcd.print(" ");
-    if (angle <= -55){
+  }
+
+  if (stepNum == 1){
+    motors.setSpeeds(200, 100);
+    if ( angle <= -55){
       stepNum = 2;
-      break;
-      }
-   }
-   while ( stepNum == 2){
-    motors.setSpeeds(150, 200);
-    turnSensorUpdate();
-    angle = getAngle();
-    lcd.gotoXY(0, 0);
-    lcd.print(angle);
-    lcd.print(" ");
+    }
+  }
+  if (stepNum == 2){
+    motors.setSpeeds(100,200);
     if (angle >= 55){
       stepNum = 1;
-      break;
     }
-   }
   }
 }
- 
