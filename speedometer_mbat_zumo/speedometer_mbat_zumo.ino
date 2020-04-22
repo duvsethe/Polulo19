@@ -102,13 +102,14 @@ void loop() {
     { 
       //unsigned long bTime = millis()-last_ten_sec;
       batteryLevel = batteryCalc(batteryLevel, motorSpeed);
-      Serial.println(String(batteryLevel)); 
+      // Serial.println(String(batteryLevel)); 
       
       lcd.clear();
       lcd.gotoXY(0,0);
       lcd.print(String(batteryLevel) + "%"); 
       //lcd.display();
-      
+
+      delay(1000);
     
       last_ten_sec = millis();
     }
@@ -129,6 +130,8 @@ void loop() {
     lcd.gotoXY(0,1);
     lcd.print("A:" + String(average_speed) + "m/s"); // printer ut gjennomsnittshastighet hvert minutt 
     //lcd.display();
+
+    delay(1000);
   
     meters_per_minute = 0;
   
@@ -151,29 +154,20 @@ else if (batteryLevel >= 80)
   {
  //digitalWrite(yellowLed, HIGH);
 // digitalWrite(redLed, HIGH);
-  ledYellow(1);
-  ledRed(0);
-  ledGreen(1)
+ ledYellow(1);
+ ledRed(1);
+ ledGreen(0);
   }
 
 else if (batteryLevel >= 70) 
   { 
  //digitalWrite(yellowLed, LOW);
  //digitalWrite(redLed, LOW);
-  ledYellow(1);
-  ledRed(0);
-  ledGreen(0)
-
-else if (batteryLevel >= 60) 
-  { 
- //digitalWrite(yellowLed, LOW);
- //digitalWrite(redLed, LOW);
-  ledYellow(1);
-  ledRed(1);
-  ledGreen(0)
- 
+ ledYellow(0);
+ ledRed(1);
+ ledGreen(0);
   }
-else if (batteryLevel >= 0 )
+else if (batteryLevel == 0 )
   { 
     motors.setSpeeds(0 , 0); 
   //digitalWrite(yellowLed, LOW);
