@@ -159,7 +159,7 @@ int servoEndPos = 0;
 int servoPos = 0;
 int alarmNumb = 0;
 int freq = 1000;
-int channel = 0;
+int channel = 2;
 int resolution = 8;
 
 //Alarm limits
@@ -359,13 +359,16 @@ void myTimerEvent8(){
   if ( alarmNumb != 0){
     if (led3.getValue()){
       led3.off();
+      ledcWriteTone(channel, 1000);
     }
     else{
       led3.on();
+      ledcWriteTone(channel, 2000);
     }
   }
   else{
     led3.off();
+    ledcWriteTone(channel, 0);
   }
 }
 
@@ -488,7 +491,6 @@ void setup()
   pinMode(pinTilt, INPUT);
   pinMode(pinTrig, OUTPUT);
   pinMode(pinEcho, INPUT);
-  pinMode(buzzer, OUTPUT);
   
   //Blynk.begin(auth, ssid, pass);
   // You can also specify server:
@@ -497,10 +499,10 @@ void setup()
 
   //Attach pin to buzzer
   ledcSetup(channel, freq, resolution);
-  ledcAttachPin(35, channel);
+  ledcAttachPin(12, channel);
 
   //Attach pin to servomotor, and test the motor
-  myservo.attach(12);
+  myservo.attach(25);
   for ( int i = 0; i <=180; i++){
     myservo.write(i);
     servoPos = i;
@@ -556,7 +558,7 @@ void setup()
   timer.setInterval(10000L, myTimerEvent5);//Calculating average every 10sec
   timer.setInterval(30000L, myTimerEvent6);//Max & Min calue every 30 sec
   timer.setInterval(20L, myTimerEvent7); 
-  timer.setInterval(900L, myTimerEvent8);
+  timer.setInterval(2050L, myTimerEvent8);
   //Start time set
   startTime = millis();
 }
@@ -653,7 +655,6 @@ void servoAlarm(){
   myservo.write(servoAlarmVal);
   servoEndPos = 1; //Signalising what end position servo is in
   servoPos = servoAlarmVal;  
-  ledcWrite(channel, 1000);
 }
 
 void servoReset(){
@@ -661,7 +662,6 @@ void servoReset(){
   myservo.write(servoResetVal);
   servoEndPos = 0; //Signalising what end position servo is in
   servoPos = servoResetVal;
-  ledcWrite(channel, 0);
 }
 
 //Section of code for creating the local website
