@@ -138,31 +138,42 @@ void loop() {
   }
 
     
-if (batteryLevel > 10) 
+if (batteryLevel >= 90) 
   { 
  //digitalWrite(yellowLed, LOW);
  //digitalWrite(redLed, HIGH); 
  ledYellow(0);
- ledRed(1);
+ ledRed(0);
+ ledGreen(1);
   }
 
-else if (batteryLevel > 5)
+else if (batteryLevel >= 80)
   {
  //digitalWrite(yellowLed, HIGH);
 // digitalWrite(redLed, HIGH);
   ledYellow(1);
-  ledRed(1);
+  ledRed(0);
+  ledGreen(1)
   }
 
-else if (batteryLevel > 0) 
+else if (batteryLevel >= 70) 
   { 
  //digitalWrite(yellowLed, LOW);
  //digitalWrite(redLed, LOW);
-  ledYellow(0);
+  ledYellow(1);
   ledRed(0);
+  ledGreen(0)
+
+else if (batteryLevel >= 60) 
+  { 
+ //digitalWrite(yellowLed, LOW);
+ //digitalWrite(redLed, LOW);
+  ledYellow(1);
+  ledRed(1);
+  ledGreen(0)
  
   }
-else if (batteryLevel == 0 )
+else if (batteryLevel >= 0 )
   { 
     motors.setSpeeds(0 , 0); 
   //digitalWrite(yellowLed, LOW);
