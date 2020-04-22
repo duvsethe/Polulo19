@@ -43,6 +43,9 @@ void loop() {
    while ( stepNum == 0){
     motors.setSpeeds(50, -50);
     angle = getAngle();
+    lcd.gotoXY(0, 0);
+    lcd.print(angle);
+    lcd.print(" ");    
     if (angle >= 55){
       motors.setSpeeds(0,0);
       stepNum = 1;
@@ -52,6 +55,9 @@ void loop() {
    while ( stepNum == 1){
     motors.setSpeeds(100, 150);
     angle = getAngle();
+    lcd.gotoXY(0, 0);
+    lcd.print(angle);
+    lcd.print(" ");
     if (angle <= -55){
       stepNum = 2;
       break;
@@ -60,6 +66,9 @@ void loop() {
    while ( stepNum == 2){
     motors.setSpeeds(150, 100);
     angle = getAngle();
+    lcd.gotoXY(0, 0);
+    lcd.print(angle);
+    lcd.print(" ");
     if (angle >= 55){
       stepNum = 1;
       break;
