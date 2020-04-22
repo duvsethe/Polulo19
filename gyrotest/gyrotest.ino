@@ -74,12 +74,13 @@ void coneDrive (){
     lcd.print(" ");    
     if (angle >= 55){
       motors.setSpeeds(0,0);
+      delay(20);
       stepNum = 1;
       break;
     }
   }
 
-  if (coneNum >= 2){
+  if (coneNum >= 3){
     motors.setSpeeds(100,200);
     if ( angle >= 0){
       motors.setSpeeds(0,0);
